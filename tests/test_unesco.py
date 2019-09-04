@@ -31,7 +31,7 @@ class TestUnesco:
 
     @pytest.fixture(scope='function')
     def csv_content(self):
-        r = hdx.utilities.downloader.Download(user_agent='test').download('https://raw.githubusercontent.com/mcarans/hdx-scraper-unesco/master/tests/fixtures/EDU_FINANCE.csv')
+        r = hdx.utilities.downloader.Download(user_agent='test').download('https://raw.githubusercontent.com/OCHA-DAP/hdx-scraper-unesco/master/tests/fixtures/EDU_FINANCE.csv')
         content = r.content
         r.close()
         return content

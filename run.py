@@ -43,6 +43,7 @@ def main():
                         resources = dataset.get_resources()
                         resource_ids = [x['id'] for x in sorted(resources, key=lambda x: x['name'], reverse=False)]
                         dataset.reorder_resources(resource_ids, hxl_update=False)
+                        dataset.preview_off()
                         showcase.create_in_hdx()
                         showcase.add_dataset(dataset)
 

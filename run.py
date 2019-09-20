@@ -40,7 +40,7 @@ def main():
                         start = default_timer()
                         dataset.preview_off()
                         dataset.create_in_hdx(remove_additional_resources=True, hxl_update=False)
-                        print("total time = %d" % (default_timer() - start))
+                        logger.info("total time = %d" % (default_timer() - start))
                         resources = dataset.get_resources()
                         resource_ids = [x['id'] for x in sorted(resources, key=lambda x: x['name'], reverse=False)]
                         dataset.reorder_resources(resource_ids, hxl_update=False)

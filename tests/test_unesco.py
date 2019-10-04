@@ -27,7 +27,7 @@ class TestUnesco:
         Locations.set_validlocations([{'name': 'arg', 'title': 'Argentina'}])  # add locations used in tests
         Country.countriesdata(use_live=False)
         Vocabulary._tags_dict = True
-        Vocabulary._approved_vocabulary = {'tags': [{'name': 'sustainable development'}, {'name': 'demographics'}, {'name': 'socioeconomics'}, {'name': 'education'}], 'id': '4e61d464-4943-4e97-973a-84673c1aaa87', 'name': 'approved'}
+        Vocabulary._approved_vocabulary = {'tags': [{'name': 'sustainable development'}, {'name': 'demographics'}, {'name': 'socioeconomics'}, {'name': 'education'}, {'name': 'indicators'}, {'name': 'hxl'}], 'id': '4e61d464-4943-4e97-973a-84673c1aaa87', 'name': 'approved'}
 
     @pytest.fixture(scope='function')
     def csv_content(self):
@@ -90,9 +90,12 @@ class TestUnesco:
             assert dataset == {'tags': [{'name': 'sustainable development', 'vocabulary_id': '4e61d464-4943-4e97-973a-84673c1aaa87'},
                                         {'name': 'demographics', 'vocabulary_id': '4e61d464-4943-4e97-973a-84673c1aaa87'},
                                         {'name': 'socioeconomics', 'vocabulary_id': '4e61d464-4943-4e97-973a-84673c1aaa87'},
-                                        {'name': 'education', 'vocabulary_id': '4e61d464-4943-4e97-973a-84673c1aaa87'}],
+                                        {'name': 'education', 'vocabulary_id': '4e61d464-4943-4e97-973a-84673c1aaa87'},
+                                        {'name': 'indicators', 'vocabulary_id': '4e61d464-4943-4e97-973a-84673c1aaa87'},
+                                        {'name': 'hxl', 'vocabulary_id': '4e61d464-4943-4e97-973a-84673c1aaa87'}],
                                'owner_org': '18f2d467-dcf8-4b7e-bffa-b3c338ba3a7c', 'data_update_frequency': '365',
-                               'title': 'UNESCO Education: Financial resources - Argentina',
+                               'title': 'Argentina - Education: Financial resources', 'dataset_preview': 'no_preview',
+                               'notes': "Education: Financial resources indicators for Argentina.\n\nContains data from UNESCO's [data portal](http://uis.unesco.org/).",
                                'groups': [{'name': 'arg'}], 'maintainer': '196196be-6037-4488-8b71-d786adf4c081',
                                'name': 'unesco-education-financial-resources-argentina', 'dataset_date': '01/01/1970-12/31/2014',
                                'subnational': '0'}
@@ -101,7 +104,7 @@ class TestUnesco:
             assert resources == [{'description': 'Government expenditure per student', 'format': 'csv', 'name': 'XUNIT', 'resource_type': 'file.upload', 'url_type': 'upload'}]
 
             assert showcase == {'name': 'unesco-education-financial-resources-argentina-showcase',
-                                'notes': 'Education, literacy and other indicators for Argentina',
+                                'notes': 'Education: Financial resources indicators for Argentina',
                                 'image_url': 'http://www.tellmaps.com/uis/internal/assets/uisheader-en.png',
                                 'url': 'http://uis.unesco.org/en/country/AR',
                                 'tags': [{'name': 'sustainable development',
@@ -110,6 +113,8 @@ class TestUnesco:
                                           'vocabulary_id': '4e61d464-4943-4e97-973a-84673c1aaa87'},
                                          {'name': 'socioeconomics',
                                           'vocabulary_id': '4e61d464-4943-4e97-973a-84673c1aaa87'},
-                                         {'name': 'education', 'vocabulary_id': '4e61d464-4943-4e97-973a-84673c1aaa87'}],
-                                'title': 'UNESCO Education: Financial resources - Argentina'}
+                                         {'name': 'education', 'vocabulary_id': '4e61d464-4943-4e97-973a-84673c1aaa87'},
+                                         {'name': 'indicators', 'vocabulary_id': '4e61d464-4943-4e97-973a-84673c1aaa87'},
+                                         {'name': 'hxl', 'vocabulary_id': '4e61d464-4943-4e97-973a-84673c1aaa87'}],
+                                'title': 'Argentina - Education: Financial resources'}
 

@@ -316,17 +316,19 @@ def remove_useless_columns_from_df(df):
 
 
 def create_dataset_showcase(name, countryname, countryiso2, countryiso3, single_dataset=False):
-    slugified_name = slugify(name).lower()
+    slugified_name = slugify('UNESCO %s - %s' % (name, countryname)).lower()
     slugified_name = slugified_name.replace("united-kingdom-of-great-britain-and-northern-ireland","uk") # Too long
     slugified_name = slugified_name.replace("demographic-and-socio-economic-indicators","dsei") # Too long
     if single_dataset:
         title = '%s - Sustainable development, Education, Demographic and Socioeconomic Indicators' % countryname
     else:
-        title = name
+        title = '%s - %s' % (countryname, name)
     dataset = Dataset({
         'name': slugified_name,
-        'title': title
+        'title': title,
+        'notes': "%s indicators for %s.\n\nContains data from UNESCO's [data portal](http://uis.unesco.org/)." % (name, countryname)
     })
+
     dataset.set_maintainer('196196be-6037-4488-8b71-d786adf4c081')
     dataset.set_organization('18f2d467-dcf8-4b7e-bffa-b3c338ba3a7c')
     dataset.set_subnational(False)
@@ -336,13 +338,14 @@ def create_dataset_showcase(name, countryname, countryiso2, countryiso3, single_
         logger.exception('%s has a problem! %s' % (countryname, e))
         return None,None
     dataset.set_expected_update_frequency('Every year')
-    tags = ['sustainable development', 'demographics', 'socioeconomics', 'education']
+    tags = ['sustainable development', 'demographics', 'socioeconomics', 'education', 'indicators', 'hxl']
     dataset.add_tags(tags)
+    dataset.preview_off()
 
     showcase = Showcase({
         'name': '%s-showcase' % slugified_name,
-        'title': name,
-        'notes': 'Education, literacy and other indicators for %s' % countryname,
+        'title': title,
+        'notes': '%s indicators for %s' % (name, countryname),
         'url': 'http://uis.unesco.org/en/country/%s' % countryiso2,
         'image_url': 'http://www.tellmaps.com/uis/internal/assets/uisheader-en.png'
     })
@@ -460,7 +463,7 @@ def generate_dataset_and_showcase(downloader,
 
     if single_dataset:
         name = 'UNESCO indicators - %s' % countryname
-        dataset, showcase = create_dataset_showcase(name, countryname, countryiso2, countryiso3, single_dataset=single_dataset)
+        dataset, showcase = create_dataset_showcase('indicators', countryname, countryiso2, countryiso3, single_dataset=single_dataset)
         if dataset is None:
             return
 
@@ -471,8 +474,7 @@ def generate_dataset_and_showcase(downloader,
         response = load_safely(downloader, '%s%s' % (structure_url, dataurl_suffix))
         json = response.json()
         if not single_dataset:
-            name = 'UNESCO %s - %s' % (json["structure"]["name"], countryname)
-            dataset, showcase = create_dataset_showcase(name, countryname, countryiso2, countryiso3, single_dataset=single_dataset)
+            dataset, showcase = create_dataset_showcase(json['structure']['name'], countryname, countryiso2, countryiso3, single_dataset=single_dataset)
             if dataset is None:
                 continue
         observations = json['structure']['dimensions']['observation']

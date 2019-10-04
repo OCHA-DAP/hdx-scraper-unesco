@@ -38,7 +38,6 @@ def main():
                     if dataset:
                         dataset.update_from_yaml()
                         start = default_timer()
-                        dataset.preview_off()
                         dataset.create_in_hdx(remove_additional_resources=True, hxl_update=False)
                         logger.info('total time = %d' % (default_timer() - start))
                         resources = dataset.get_resources()

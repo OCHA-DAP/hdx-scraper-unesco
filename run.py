@@ -64,6 +64,8 @@ def main():
                     logger.info('Run not started. Ignoring %s. STARTISO3 not matched: %s!=%s' % (countryname, countryiso3, startiso3))
                     continue
             logger.info('Adding datasets for %s (%s)' % (countryname, countryiso3))
+            with open(progress_file, 'w') as f:
+                f.write(countryiso3)
             for dataset, showcase in generate_dataset_and_showcase(downloader, countryiso3, countryiso2, countryname, endpoints_metadata, folder=folder, merge_resources=True, single_dataset=False):
                 if dataset:
                     dataset.update_from_yaml()
@@ -75,8 +77,6 @@ def main():
                     dataset.reorder_resources(resource_ids, hxl_update=False)
                     showcase.create_in_hdx()
                     showcase.add_dataset(dataset)
-            with open(progress_file, 'w') as f:
-                f.write(countryiso3)
     logger.info('UNESCO scraper completed!')
     rmtree(folder)
 

@@ -15,8 +15,8 @@ from hdx.location.country import Country
 from hdx.utilities.path import temp_dir
 import hdx.utilities.downloader
 
-from tests.testing_data import countrydata, dimensions, observations
-from unesco import generate_dataset_and_showcase, get_countriesdata, get_endpoints_metadata
+from tests.testing_data import countrydata, observations
+from unesco import generate_dataset_and_showcase, get_countries, get_endpoints_metadata
 
 
 class TestUnesco:
@@ -74,9 +74,9 @@ class TestUnesco:
 
         return Download()
 
-    def test_get_countriesdata(self, downloader):
-        countriesdata = get_countriesdata('http://xxx/', downloader)
-        assert countriesdata == [countrydata]
+    def test_get_countries(self, configuration, downloader):
+        countriesdata = get_countries('http://xxx/', downloader)
+        assert countriesdata == [('ARG', 'AR', 'Argentina')]
 
     def test_get_endpoints_metadata(self, downloader, endpoints_metadata):
         endpoints = {'EDU_FINANCE': 'http://uis.unesco.org/en/topic/education-finance'}
@@ -85,7 +85,7 @@ class TestUnesco:
 
     def test_generate_dataset_and_showcase(self, configuration, downloader, endpoints_metadata):
         with temp_dir('UNESCO') as folder:
-            res = generate_dataset_and_showcase(downloader, countrydata, endpoints_metadata, folder=folder)
+            res = generate_dataset_and_showcase(downloader, 'ARG', 'AR', 'Argentina', endpoints_metadata, folder=folder)
             dataset, showcase = next(res)
             assert dataset == {'tags': [{'name': 'sustainable development', 'vocabulary_id': '4e61d464-4943-4e97-973a-84673c1aaa87'},
                                         {'name': 'demographics', 'vocabulary_id': '4e61d464-4943-4e97-973a-84673c1aaa87'},

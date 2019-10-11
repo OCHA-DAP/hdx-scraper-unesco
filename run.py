@@ -5,6 +5,7 @@ Top level script. Calls other functions that generate datasets that this script 
 
 """
 import logging
+from os import getenv
 from os.path import join, expanduser
 from timeit import default_timer
 
@@ -12,7 +13,7 @@ from hdx.hdx_configuration import Configuration
 from hdx.utilities.downloader import Download
 from hdx.utilities.path import temp_dir
 
-from unesco import generate_dataset_and_showcase, get_countriesdata, get_endpoints_metadata
+from unesco import generate_dataset_and_showcase, get_countries, get_endpoints_metadata
 
 from hdx.facades.simple import facade
 
@@ -29,12 +30,24 @@ def main():
         with Download(extra_params_yaml=join(expanduser('~'), '.extraparams.yml'), extra_params_lookup=lookup) as downloader:
             endpoints = Configuration.read()['endpoints']
             endpoints_metadata = get_endpoints_metadata(base_url, downloader, endpoints)
-            countriesdata = get_countriesdata(base_url, downloader)
+            countries = get_countries(base_url, downloader)
 
-            logger.info('Number of datasets to upload: %d' % len(countriesdata))
+            logger.info('Number of datasets to upload: %d' % len(countries))
 
-            for countrydata in countriesdata:
-                for dataset, showcase in generate_dataset_and_showcase(downloader, countrydata, endpoints_metadata, folder=folder, merge_resources=True, single_dataset=False): # TODO: fix folder
+            startiso3 = getenv('STARTISO3')
+            if startiso3 is not None:
+                startiso3 = startiso3.upper()
+                logger.info('Environment variable STARTISO3 = %s' % startiso3)
+            found = False
+            for countryiso3, countryiso2, countryname in countries:
+                if startiso3 is not None and not found:
+                    if countryiso3 == startiso3:
+                        found = True
+                        logger.info('Starting run from STARTISO3 %s (%s)' % (startiso3, countryname))
+                    else:
+                        logger.info('Run not started. STARTISO3 not matched: %s!=%s' % (countryiso3, startiso3))
+                        continue
+                for dataset, showcase in generate_dataset_and_showcase(downloader, countryiso3, countryiso2, countryname, endpoints_metadata, folder=folder, merge_resources=True, single_dataset=False):
                     if dataset:
                         dataset.update_from_yaml()
                         start = default_timer()

@@ -19,7 +19,6 @@ from hdx.data.resource import Resource
 from hdx.data.showcase import Showcase
 from hdx.location.country import Country
 from hdx.utilities.downloader import DownloadError
-from six import reraise
 from slugify import slugify
 from io import BytesIO
 import pandas as pd
@@ -32,11 +31,31 @@ MAX_OBSERVATIONS = 29990
 dataurl_suffix = 'format=sdmx-json&detail=structureonly&includeMetrics=true'
 
 
-def get_countriesdata(base_url, downloader):
+def get_countries(base_url, downloader):
     response = downloader.download('%scodelist/UNESCO/CL_AREA/latest?format=sdmx-json' % base_url)
     jsonresponse = response.json()
-    return jsonresponse['Codelist'][0]['items']
+    countries = list()
+    for country in jsonresponse['Codelist'][0]['items']:
+        countryiso2 = country['id']
+        countryname = country['names'][0]['value']
 
+        if countryname[:4] in ['WB: ', 'SDG:', 'MDG:', 'UIS:', 'EFA:'] or countryname[:5] in ['GEMR:', 'AIMS:'] or \
+                countryname[:7] in ['UNICEF:', 'UNESCO:']:
+            logger.info('Ignoring %s!' % countryname)
+            continue
+
+        countryiso3 = Country.get_iso3_from_iso2(countryiso2)
+
+        if countryiso3 is None:
+            countryiso3, _ = Country.get_iso3_country_code_fuzzy(countryname)
+            if countryiso3 is None:
+                logger.exception('Cannot get iso3 code for %s!' % countryname)
+                continue
+            logger.info('Matched %s to %s!' % (countryname, countryiso3))
+
+        countryname = Country.get_country_name_from_iso3(countryiso3)
+        countries.append((countryiso3, countryiso2, countryname))
+    return countries
 
 def get_endpoints_metadata(base_url, downloader, endpoints):
     endpoints_metadata = dict()
@@ -416,14 +435,10 @@ def chunk_years(time_periods, max_observations=None):
         years = years[~selection]
         observation_per_year=observation_per_year[~selection]
 
-def generate_dataset_and_showcase(downloader,
-                                  countrydata,
-                                  endpoints_metadata,
-                                  folder,
-                                  merge_resources=True,
-                                  single_dataset=False,
-                                  split_to_resources_by_column = "STAT_UNIT",
-                                  remove_useless_columns = True):
+
+def generate_dataset_and_showcase(downloader, countryiso3, countryiso2, countryname, endpoints_metadata, folder,
+                                  merge_resources=True, single_dataset=False, split_to_resources_by_column="STAT_UNIT",
+                                  remove_useless_columns=True):
     """
     https://api.uis.unesco.org/sdmx/data/UNESCO,DEM_ECO/....AU.?format=csv-:-tab-true-y&locale=en&subscription-key=...
 
@@ -437,29 +452,8 @@ def generate_dataset_and_showcase(downloader,
     :param remove_useless_columns:
     :return: generator yielding (dataset, showcase) tuples. It may yield None, None.
     """
-    countryiso2 = countrydata['id']
-    countryname = countrydata['names'][0]['value']
-    logger.info("Processing %s"%countryname)
-
-    if countryname[:4] in ['WB: ', 'SDG:', 'MDG:', 'UIS:', 'EFA:'] or countryname[:5] in ['GEMR:', 'AIMS:'] or \
-            countryname[:7] in ['UNICEF:', 'UNESCO:']:
-        logger.info('Ignoring %s!' % countryname)
-        yield None, None
-        return
-
-    countryiso3 = Country.get_iso3_from_iso2(countryiso2)
-
-    if countryiso3 is None:
-        countryiso3, _ = Country.get_iso3_country_code_fuzzy(countryname)
-        if countryiso3 is None:
-            logger.exception('Cannot get iso3 code for %s!' % countryname)
-            yield None, None
-            return
-        logger.info('Matched %s to %s!' % (countryname, countryiso3))
-
     earliest_year = 10000
     latest_year = 0
-
 
     if single_dataset:
         name = 'UNESCO indicators - %s' % countryname

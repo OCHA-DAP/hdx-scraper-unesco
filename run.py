@@ -43,10 +43,11 @@ def main():
                 if startiso3 is not None and not found:
                     if countryiso3 == startiso3:
                         found = True
-                        logger.info('Starting run from STARTISO3 %s (%s)' % (startiso3, countryname))
+                        logger.info('Starting run from STARTISO3 %s (%s)' % (countryiso3, countryname))
                     else:
-                        logger.info('Run not started. STARTISO3 not matched: %s!=%s' % (countryiso3, startiso3))
+                        logger.info('Run not started. Ignoring %s. STARTISO3 not matched: %s!=%s' % (countryname, countryiso3, startiso3))
                         continue
+                logger.info('Adding datasets for %s (%s)' % (countryname, countryiso3))
                 for dataset, showcase in generate_dataset_and_showcase(downloader, countryiso3, countryiso2, countryname, endpoints_metadata, folder=folder, merge_resources=True, single_dataset=False):
                     if dataset:
                         dataset.update_from_yaml()

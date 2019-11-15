@@ -1,11 +1,10 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 '''
-Unit tests for scrapername.
+Unit tests for UNESCO.
 
 '''
 from os.path import join
-from pprint import pprint
 
 import pytest
 from hdx.data.vocabulary import Vocabulary
@@ -20,6 +19,8 @@ from unesco import generate_dataset_and_showcase, get_countries, get_endpoints_m
 
 
 class TestUnesco:
+    countries = [{'iso3': 'ARG', 'iso2': 'AR', 'name': 'Argentina'}]
+
     @pytest.fixture(scope='function')
     def configuration(self):
         Configuration._create(hdx_read_only=True, user_agent='test',
@@ -76,7 +77,7 @@ class TestUnesco:
 
     def test_get_countries(self, configuration, downloader):
         countriesdata = get_countries('http://xxx/', downloader)
-        assert countriesdata == [('ARG', 'AR', 'Argentina')]
+        assert countriesdata == TestUnesco.countries
 
     def test_get_endpoints_metadata(self, downloader, endpoints_metadata):
         endpoints = {'EDU_FINANCE': 'http://uis.unesco.org/en/topic/education-finance'}
@@ -85,7 +86,7 @@ class TestUnesco:
 
     def test_generate_dataset_and_showcase(self, configuration, downloader, endpoints_metadata):
         with temp_dir('UNESCO') as folder:
-            res = generate_dataset_and_showcase(downloader, 'ARG', 'AR', 'Argentina', endpoints_metadata, folder=folder)
+            res = generate_dataset_and_showcase(downloader, TestUnesco.countries[0], endpoints_metadata, folder=folder)
             dataset, showcase = next(res)
             assert dataset == {'tags': [{'name': 'sustainable development', 'vocabulary_id': '4e61d464-4943-4e97-973a-84673c1aaa87'},
                                         {'name': 'demographics', 'vocabulary_id': '4e61d464-4943-4e97-973a-84673c1aaa87'},

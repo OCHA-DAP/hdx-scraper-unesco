@@ -54,8 +54,9 @@ def get_countries(base_url, downloader):
             logger.info('Matched %s to %s!' % (countryname, countryiso3))
 
         countryname = Country.get_country_name_from_iso3(countryiso3)
-        countries.append((countryiso3, countryiso2, countryname))
+        countries.append({'iso3': countryiso3, 'iso2': countryiso2, 'name': countryname})
     return countries
+
 
 def get_endpoints_metadata(base_url, downloader, endpoints):
     endpoints_metadata = dict()
@@ -334,7 +335,8 @@ def remove_useless_columns_from_df(df):
     return df
 
 
-def create_dataset_showcase(name, countryname, countryiso2, countryiso3, single_dataset=False):
+def create_dataset_showcase(name, country, single_dataset=False):
+    countryname = country['name']
     slugified_name = slugify('UNESCO %s - %s' % (name, countryname)).lower()
     slugified_name = slugified_name.replace("united-kingdom-of-great-britain-and-northern-ireland","uk") # Too long
     slugified_name = slugified_name.replace("demographic-and-socio-economic-indicators","dsei") # Too long
@@ -352,7 +354,7 @@ def create_dataset_showcase(name, countryname, countryiso2, countryiso3, single_
     dataset.set_organization('18f2d467-dcf8-4b7e-bffa-b3c338ba3a7c')
     dataset.set_subnational(False)
     try:
-        dataset.add_country_location(countryiso3)
+        dataset.add_country_location(country['iso3'])
     except HDXError as e:
         logger.exception('%s has a problem! %s' % (countryname, e))
         return None,None
@@ -365,12 +367,13 @@ def create_dataset_showcase(name, countryname, countryiso2, countryiso3, single_
         'name': '%s-showcase' % slugified_name,
         'title': title,
         'notes': '%s indicators for %s' % (name, countryname),
-        'url': 'http://uis.unesco.org/en/country/%s' % countryiso2,
+        'url': 'http://uis.unesco.org/en/country/%s' % country['iso2'],
         'image_url': 'http://www.tellmaps.com/uis/internal/assets/uisheader-en.png'
     })
     showcase.add_tags(tags)
 
     return dataset, showcase
+
 
 def load_safely(downloader, url):
     """
@@ -436,9 +439,8 @@ def chunk_years(time_periods, max_observations=None):
         observation_per_year=observation_per_year[~selection]
 
 
-def generate_dataset_and_showcase(downloader, countryiso3, countryiso2, countryname, endpoints_metadata, folder,
-                                  merge_resources=True, single_dataset=False, split_to_resources_by_column="STAT_UNIT",
-                                  remove_useless_columns=True):
+def generate_dataset_and_showcase(downloader, country, endpoints_metadata, folder, merge_resources=True,
+                                  single_dataset=False, split_to_resources_by_column="STAT_UNIT", remove_useless_columns=True):
     """
     https://api.uis.unesco.org/sdmx/data/UNESCO,DEM_ECO/....AU.?format=csv-:-tab-true-y&locale=en&subscription-key=...
 
@@ -452,23 +454,25 @@ def generate_dataset_and_showcase(downloader, countryiso3, countryiso2, countryn
     :param remove_useless_columns:
     :return: generator yielding (dataset, showcase) tuples. It may yield None, None.
     """
+    countryname = country['name']
+    countryiso3 = country['iso3']
     earliest_year = 10000
     latest_year = 0
 
     if single_dataset:
         name = 'UNESCO indicators - %s' % countryname
-        dataset, showcase = create_dataset_showcase('indicators', countryname, countryiso2, countryiso3, single_dataset=single_dataset)
+        dataset, showcase = create_dataset_showcase('indicators', country, single_dataset=single_dataset)
         if dataset is None:
             return
 
     for endpoint in sorted(endpoints_metadata):
         time.sleep(0.2)
         indicator, structure_url, more_info_url, dimensions = endpoints_metadata[endpoint]
-        structure_url = structure_url % countryiso2
+        structure_url = structure_url % country['iso2']
         response = load_safely(downloader, '%s%s' % (structure_url, dataurl_suffix))
         json = response.json()
         if not single_dataset:
-            dataset, showcase = create_dataset_showcase(json['structure']['name'], countryname, countryiso2, countryiso3, single_dataset=single_dataset)
+            dataset, showcase = create_dataset_showcase(json['structure']['name'], country, single_dataset=single_dataset)
             if dataset is None:
                 continue
         observations = json['structure']['dimensions']['observation']

@@ -6,13 +6,12 @@ Top level script. Calls other functions that generate datasets that this script 
 """
 import logging
 from os.path import join, expanduser
-from timeit import default_timer
 
 from hdx.hdx_configuration import Configuration
 from hdx.utilities.downloader import Download
-from hdx.utilities.path import progress_storing_tempdir
+from hdx.utilities.path import get_temp_dir, progress_storing_tempdir
 
-from unesco import generate_dataset_and_showcase, get_countries, get_endpoints_metadata
+from unesco import download_indicatorsets, get_countriesdata, generate_dataset_and_showcase
 
 from hdx.facades.simple import facade
 
@@ -25,26 +24,26 @@ def main():
     """Generate dataset and create it in HDX"""
 
     base_url = Configuration.read()['base_url']
-    with Download(extra_params_yaml=join(expanduser('~'), '.extraparams.yml'), extra_params_lookup=lookup) as downloader:
-        endpoints = Configuration.read()['endpoints']
-        endpoints_metadata = get_endpoints_metadata(base_url, downloader, endpoints)
-        countries = get_countries(base_url, downloader)
-        logger.info('Number of datasets to upload: %d' % len(countries))
-
+    with Download() as downloader:
+        folder = get_temp_dir('UNESCO')
+        indicatorsetcodes = Configuration.read()['indicatorsetcodes']
+        indicatorsets = download_indicatorsets(base_url, folder, indicatorsetcodes)
+        logger.info('Number of indicator types to upload: %d' % len(indicatorsets))
+        countries, headers, countriesdata, indheaders, indicatorsetsindicators, indicatorsetsdates = \
+            get_countriesdata(indicatorsets, downloader)
+        logger.info('Number of countries to upload: %d' % len(countries))
         for folder, country in progress_storing_tempdir('UNESCO', countries, 'iso3'):
-            logger.info('Adding datasets for %s' % country['name'])
-            for dataset, showcase in generate_dataset_and_showcase(downloader, country, endpoints_metadata, folder=folder, merge_resources=True, single_dataset=False):
-                if dataset:
-                    dataset.update_from_yaml()
-                    start = default_timer()
-                    dataset.create_in_hdx(remove_additional_resources=True, hxl_update=False, updated_by_script='HDX Scraper: UNESCO')
-                    logger.info('total time = %d' % (default_timer() - start))
-                    resources = dataset.get_resources()
-                    resource_ids = [x['id'] for x in sorted(resources, key=lambda x: x['name'], reverse=False)]
-                    dataset.reorder_resources(resource_ids, hxl_update=False)
-                    showcase.create_in_hdx()
-                    showcase.add_dataset(dataset)
-        logger.info('UNESCO scraper completed!')
+            countrydata = countriesdata[country['iso3']]
+            dataset, showcase = generate_dataset_and_showcase(
+                folder, indicatorsetcodes, indheaders, indicatorsetsindicators,
+                indicatorsetsdates, country, headers, countrydata)
+            if dataset:
+                dataset.update_from_yaml()
+                dataset.generate_resource_view(-1)
+                dataset.create_in_hdx(remove_additional_resources=True, hxl_update=False, updated_by_script='HDX Scraper: UNESCO')
+                showcase.create_in_hdx()
+                showcase.add_dataset(dataset)
+
 
 
 if __name__ == '__main__':

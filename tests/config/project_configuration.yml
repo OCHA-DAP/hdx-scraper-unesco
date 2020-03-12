@@ -1,3 +1,23 @@
 # Collector specific configuration
 base_url: "http://xxx/"
+indicatorsetcodes:
+  EDUN:
+    title: "Students and Teachers"
+    showcase: "http://uis.unesco.org/#tabs-themes_tab-center-1"
+    quickcharts:
+      - "20082"
+      - "20122"
+      - "26375"
+  EDUF:
+    title: "Education Expenditure and Funding"
+    showcase: "http://uis.unesco.org/en/topic/education-finance"
+  EDUR:
+    title: "School Resources and Teaching Conditions in Africa"
+    showcase: "http://uis.unesco.org/en/topic/education-africa"
+  SDG:
+    title: "SDG 4 Global and Thematic Indicators"
+    showcase: "http://uis.unesco.org/en/topic/sustainable-development-goal-4"
+  DEM:
+    title: "Demographic and Socio-economic Indicators"
+    showcase: " "
 

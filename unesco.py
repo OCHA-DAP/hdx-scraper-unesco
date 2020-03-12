@@ -7,7 +7,6 @@ UNESCO:
 Reads UNESCO bulk files and creates datasets.
 
 """
-import json
 import logging
 import re
 from os import remove
@@ -27,7 +26,7 @@ logger = logging.getLogger(__name__)
 hxltags = {'INDICATOR_ID': '#indicator+code', 'INDICATOR_LABEL_EN': '#indicator+name', 'COUNTRY_ID': '#country+code', 'YEAR': '#date+year', 'VALUE': '#indicator+value+num'}
 
 
-def download_indicatorsets(base_url, folder, indicatorsetcodes):
+def download_indicatorsets(base_url, folder, indicatorsetcodes, urlretrieve=urlretrieve):
     indicatorsets = dict()
     for indicatorsetcode in indicatorsetcodes:
         filename = '%s.zip' % indicatorsetcode
@@ -58,6 +57,8 @@ def get_countriesdata(indicatorsets, downloader):
     indicatorsetsdates = dict()
     indicatorsetsindicators = dict()
     for indicatorsetcode in indicatorsets:
+        # if indicatorsetcode != 'EDUN':   FOR GENERATING TEST DATA
+        #     continue
         path = indicatorsets[indicatorsetcode]
         indfile = None
         datafile = None
@@ -97,6 +98,8 @@ def get_countriesdata(indicatorsets, downloader):
                     countriesdata[countryiso] = countrydata
                     iso2 = Country.get_iso2_from_iso3(countryiso)
                     countries.append({'iso3': countryiso, 'iso2': iso2, 'countryname': Country.get_country_name_from_iso3(countryiso)})
+#                if row['INDICATOR_ID'] not in ['20082', '20122', '26375']:  FOR GENERATING TEST DATA
+#                    continue
                 dict_of_lists_add(countrydata, indicatorsetcode, row)
     return countries, headers, countriesdata, indheaders, indicatorsetsindicators, indicatorsetsdates
 
@@ -120,6 +123,7 @@ def generate_dataset_and_showcase(folder, indicatorsetcodes, indheaders, indicat
     tags = ['sustainable development', 'demographics', 'socioeconomics', 'education', 'indicators', 'hxl']
     dataset.add_tags(tags)
 
+    bites_disabled = None
     categories = list()
     for indicatorsetcode in indicatorsetcodes:
         indicatorsetname = indicatorsetcodes[indicatorsetcode]['title']
@@ -143,7 +147,7 @@ def generate_dataset_and_showcase(folder, indicatorsetcodes, indheaders, indicat
         if success is False:
             logger.warning('%s for %s has no data!' % (indicatorsetname, countryname))
             continue
-
+        bites_disabled = results['bites_disabled']
         filename = '%s_indicatorlist.csv' % indicatorsetcode
         resourcedata = {
             'name': '%s indicator list' % indicatorsetname,
@@ -159,12 +163,12 @@ def generate_dataset_and_showcase(folder, indicatorsetcodes, indheaders, indicat
     resources = dataset.get_resources()
     if len(resources) == 0:
         logger.warning('%s has no data!' % countryname)
-        return None, None
+        return None, None, None
     for i, resource in enumerate(resources):
         if resource['name'][:12] == 'QuickCharts-':
             resources.append(resources.pop(i))
     notes = ['Education indicators for %s.\n\n' % countryname,
-             "Contains data from bulk download zips from UNESCO's [data portal](http://uis.unesco.org/) covering",
+             "Contains data from bulk download zips from UNESCO's [data portal](http://uis.unesco.org/) covering ",
              'the following categories: %s' % ', '.join(categories)]
     dataset['notes'] = ''.join(notes)
 
@@ -177,7 +181,7 @@ def generate_dataset_and_showcase(folder, indicatorsetcodes, indheaders, indicat
     })
     showcase.add_tags(tags)
 
-    return dataset, showcase
+    return dataset, showcase, bites_disabled
 
 
 

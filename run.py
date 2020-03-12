@@ -34,16 +34,15 @@ def main():
         logger.info('Number of countries to upload: %d' % len(countries))
         for folder, country in progress_storing_tempdir('UNESCO', countries, 'iso3'):
             countrydata = countriesdata[country['iso3']]
-            dataset, showcase = generate_dataset_and_showcase(
+            dataset, showcase, bites_disabled = generate_dataset_and_showcase(
                 folder, indicatorsetcodes, indheaders, indicatorsetsindicators,
                 indicatorsetsdates, country, headers, countrydata)
             if dataset:
                 dataset.update_from_yaml()
-                dataset.generate_resource_view(-1)
+                dataset.generate_resource_view(-1, bites_disabled=bites_disabled)
                 dataset.create_in_hdx(remove_additional_resources=True, hxl_update=False, updated_by_script='HDX Scraper: UNESCO')
                 showcase.create_in_hdx()
                 showcase.add_dataset(dataset)
-
 
 
 if __name__ == '__main__':

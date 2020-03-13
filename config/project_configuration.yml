@@ -15,9 +15,8 @@ indicatorsetcodes:
     title: "School Resources and Teaching Conditions in Africa"
     showcase: "http://uis.unesco.org/en/topic/education-africa"
   SDG:
-    title: "SDG 4 Global and Thematic Indicators"
+    title: "SDG 4 Global and Thematic"
     showcase: "http://uis.unesco.org/en/topic/sustainable-development-goal-4"
   DEM:
-    title: "Demographic and Socio-economic Indicators"
+    title: "Demographic and Socio-economic"
     showcase: " "
-

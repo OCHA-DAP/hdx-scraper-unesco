@@ -119,7 +119,7 @@ def generate_dataset_and_showcase(folder, indicatorsetcodes, indheaders, indicat
     dataset.set_organization('18f2d467-dcf8-4b7e-bffa-b3c338ba3a7c')
     dataset.set_expected_update_frequency('Every three months')
     dataset.set_subnational(False)
-    dataset.add_country_location(country['iso3'])
+    dataset.add_country_location(countryiso)
     tags = ['sustainable development', 'demographics', 'socioeconomics', 'education', 'indicators', 'hxl']
     dataset.add_tags(tags)
 
@@ -147,7 +147,7 @@ def generate_dataset_and_showcase(folder, indicatorsetcodes, indheaders, indicat
         if success is False:
             logger.warning('%s for %s has no data!' % (indicatorsetname, countryname))
             continue
-        bites_disabled = results['bites_disabled']
+        bites_disabled = results.get('bites_disabled')
         filename = '%s_indicatorlist.csv' % indicatorsetcode
         resourcedata = {
             'name': '%s indicator list' % indicatorsetname,
@@ -159,7 +159,7 @@ def generate_dataset_and_showcase(folder, indicatorsetcodes, indheaders, indicat
         if success is False:
             logger.warning('%s for %s has no data!' % (indicatorsetname, countryname))
             continue
-        categories.append('%s (made on %s)' % (indicatorsetname, indicatorsetsdates[indicatorsetcode]))
+        categories.append('%s (made %s)' % (indicatorsetname, indicatorsetsdates[indicatorsetcode]))
     resources = dataset.get_resources()
     if len(resources) == 0:
         logger.warning('%s has no data!' % countryname)

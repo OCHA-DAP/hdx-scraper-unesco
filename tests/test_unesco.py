@@ -86,7 +86,7 @@ class TestUNESCO:
                                'data_update_frequency': '90', 'subnational': '0', 'groups': [{'name': 'cpv'}],
                                'tags': [{'name': 'demographics', 'vocabulary_id': '4e61d464-4943-4e97-973a-84673c1aaa87'}, {'name': 'indicators', 'vocabulary_id': '4e61d464-4943-4e97-973a-84673c1aaa87'}, {'name': 'hxl', 'vocabulary_id': '4e61d464-4943-4e97-973a-84673c1aaa87'}],
                                'dataset_date': '01/01/1972-12/31/2018',
-                               'notes': "Education indicators for Cape Verde.\n\nContains data from bulk download zips from UNESCO's [data portal](http://uis.unesco.org/) covering the following categories: Students and Teachers (made on 2020 February)"}
+                               'notes': "Education indicators for Cape Verde.\n\nContains data from bulk download zips from UNESCO's [data portal](http://uis.unesco.org/) covering the following categories: Students and Teachers (made 2020 February)"}
 
             resources = dataset.get_resources()
             assert resources == [{'name': 'Students and Teachers data', 'description': 'Students and Teachers data with HXL tags.\n\nIndicators: Enrolment in secondary education, Graduates from tertiary education, Teachers in secondary education', 'format': 'csv', 'resource_type': 'file.upload', 'url_type': 'upload'},

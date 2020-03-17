@@ -115,7 +115,7 @@ def generate_dataset_and_showcase(folder, indicatorsetcodes, indheaders, indicat
         'name': slugified_name,
         'title': title
     })
-    dataset.set_maintainer('196196be-6037-4488-8b71-d786adf4c081')
+    dataset.set_maintainer('9d90f882-341d-4934-a55a-7a0ee7cc2f73')
     dataset.set_organization('18f2d467-dcf8-4b7e-bffa-b3c338ba3a7c')
     dataset.set_expected_update_frequency('Every three months')
     dataset.set_subnational(False)
@@ -168,8 +168,8 @@ def generate_dataset_and_showcase(folder, indicatorsetcodes, indheaders, indicat
         if resource['name'][:12] == 'QuickCharts-':
             resources.append(resources.pop(i))
     notes = ['Education indicators for %s.\n\n' % countryname,
-             "Contains data from bulk download zips from UNESCO's [data portal](http://uis.unesco.org/) covering ",
-             'the following categories: %s' % ', '.join(categories)]
+             "Contains data from the UNESCO Institute for Statistics [bulk data service](http://data.uis.unesco.org) ",
+             'covering the following categories: %s' % ', '.join(categories)]
     dataset['notes'] = ''.join(notes)
 
     showcase = Showcase({
@@ -182,6 +182,3 @@ def generate_dataset_and_showcase(folder, indicatorsetcodes, indheaders, indicat
     showcase.add_tags(tags)
 
     return dataset, showcase, bites_disabled
-
-
-

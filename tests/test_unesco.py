@@ -82,11 +82,11 @@ class TestUNESCO:
                 folder, indicatorsetcodes, TestUNESCO.indheaders, indicatorsetsindicators,
                 {'EDUN': '2020 February'}, country, TestUNESCO.headers, countrydata)
             assert dataset == {'name': 'unesco-data-for-cape-verde', 'title': 'Cape Verde - Education Indicators',
-                               'maintainer': '196196be-6037-4488-8b71-d786adf4c081', 'owner_org': '18f2d467-dcf8-4b7e-bffa-b3c338ba3a7c',
+                               'maintainer': '9d90f882-341d-4934-a55a-7a0ee7cc2f73', 'owner_org': '18f2d467-dcf8-4b7e-bffa-b3c338ba3a7c',
                                'data_update_frequency': '90', 'subnational': '0', 'groups': [{'name': 'cpv'}],
                                'tags': [{'name': 'demographics', 'vocabulary_id': '4e61d464-4943-4e97-973a-84673c1aaa87'}, {'name': 'indicators', 'vocabulary_id': '4e61d464-4943-4e97-973a-84673c1aaa87'}, {'name': 'hxl', 'vocabulary_id': '4e61d464-4943-4e97-973a-84673c1aaa87'}],
                                'dataset_date': '01/01/1972-12/31/2018',
-                               'notes': "Education indicators for Cape Verde.\n\nContains data from bulk download zips from UNESCO's [data portal](http://uis.unesco.org/) covering the following categories: Students and Teachers (made 2020 February)"}
+                               'notes': "Education indicators for Cape Verde.\n\nContains data from the UNESCO Institute for Statistics [bulk data service](http://data.uis.unesco.org) covering the following categories: Students and Teachers (made 2020 February)"}
 
             resources = dataset.get_resources()
             assert resources == [{'name': 'Students and Teachers data', 'description': 'Students and Teachers data with HXL tags.\n\nIndicators: Enrolment in secondary education, Graduates from tertiary education, Teachers in secondary education', 'format': 'csv', 'resource_type': 'file.upload', 'url_type': 'upload'},

@@ -1,7 +1,7 @@
  ### Collector for UNESCO's Datasets
 [![Build Status](https://travis-ci.org/OCHA-DAP/hdx-scraper-unesco.svg?branch=master&ts=1)](https://travis-ci.org/OCHA-DAP/hdx-scraper-unesco) [![Coverage Status](https://coveralls.io/repos/github/OCHA-DAP/hdx-scraper-unesco/badge.svg?branch=master&ts=1)](https://coveralls.io/github/OCHA-DAP/hdx-scraper-unesco?branch=master)
 
-This script connects to the [UNESCO API](https://apiportal.uis.unesco.org/) and extracts data for 5 endpoints (DEM_ECO, EDU_FINANCE, EDU_NON_FINANCE, EDU_REGIONAL_MODULE, SDG4) country by country creating a dataset per country in HDX. Due to the UNESCO API having a very small quota limit (100 calls per hour), the scraper periodically hits this limit and must then poll every minute until the quota is renewed. Hence it can take around half a day to complete. It makes in the order of 1000 reads from UNESCO and 1000 read/writes (API calls) to HDX in total. It creates around 100 temporary files per country of no more than 100Kb size. It is run when UNESCO make changes (not in their data but for example in their endpoints or API), in practice this is quarterly. 
+This script connects to the [UNESCO bulk downloads](https://apiportal.uis.unesco.org/bdds) and extracts data for 5 endpoints (DEM_ECO, EDU_FINANCE, EDU_NON_FINANCE, EDU_REGIONAL_MODULE, SDG4) country by country creating one dataset (with 5 endpoints as resources) per country in HDX. It makes in the order of 10 reads from UNESCO and 1000 read/writes (API calls) to HDX in total. It creates around 120 temporary files, the largest, a zip, being under 100Mb. It is run when UNESCO make changes (not in their data but for example in their endpoints or API), in practice this is quarterly. 
 
 
 ### Usage

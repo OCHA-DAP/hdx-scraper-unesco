@@ -1,9 +1,22 @@
 # Collector specific configuration
-base_url: "http://api.uis.unesco.org/sdmx/"
-endpoints:
-  DEM_ECO: " "
-  EDU_FINANCE: "http://uis.unesco.org/en/topic/education-finance"
-  EDU_NON_FINANCE: "http://uis.unesco.org/#tabs-themes_tab-center-1"
-  EDU_REGIONAL_MODULE: "http://uis.unesco.org/en/topic/education-africa"
-  SDG4: "http://uis.unesco.org/en/topic/sustainable-development-goal-4"
-
+base_url: "ftp://ftp.uis.unesco.org/BDDS"
+indicatorsetcodes:
+  EDUN:
+    title: "Students and Teachers"
+    showcase: "http://uis.unesco.org/#tabs-themes_tab-center-1"
+    quickcharts:
+      - "20082"
+      - "20122"
+      - "26375"
+  EDUF:
+    title: "Education Expenditure and Funding"
+    showcase: "http://uis.unesco.org/en/topic/education-finance"
+  EDUR:
+    title: "School Resources and Teaching Conditions in Africa"
+    showcase: "http://uis.unesco.org/en/topic/education-africa"
+  SDG:
+    title: "SDG 4 Global and Thematic"
+    showcase: "http://uis.unesco.org/en/topic/sustainable-development-goal-4"
+  DEM:
+    title: "Demographic and Socio-economic"
+    showcase: " "

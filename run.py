@@ -29,14 +29,13 @@ def main():
         indicatorsetcodes = Configuration.read()['indicatorsetcodes']
         indicatorsets = download_indicatorsets(base_url, folder, indicatorsetcodes)
         logger.info('Number of indicator types to upload: %d' % len(indicatorsets))
-        countries, headers, countriesdata, indheaders, indicatorsetsindicators, indicatorsetsdates = \
-            get_countriesdata(indicatorsets, downloader)
+        countries, indheaders, indicatorsetsindicators, indicatorsetsdates, datafiles = \
+            get_countriesdata(indicatorsets, downloader, folder)
         logger.info('Number of countries to upload: %d' % len(countries))
         for folder, country in progress_storing_tempdir('UNESCO', countries, 'iso3'):
-            countrydata = countriesdata[country['iso3']]
             dataset, showcase, bites_disabled = generate_dataset_and_showcase(
-                folder, indicatorsetcodes, indheaders, indicatorsetsindicators,
-                indicatorsetsdates, country, headers, countrydata)
+                indicatorsetcodes, indheaders, indicatorsetsindicators, indicatorsetsdates, country, datafiles,
+                downloader, folder)
             if dataset:
                 dataset.update_from_yaml()
                 dataset.generate_resource_view(-1, bites_disabled=bites_disabled)

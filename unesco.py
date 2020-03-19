@@ -51,9 +51,9 @@ def download_indicatorsets(base_url, folder, indicatorsetcodes, urlretrieve=urlr
     return indicatorsets
 
 
-def get_countriesdata(indicatorsets, downloader):
-    countries = list()
-    countriesdata = dict()
+def get_countriesdata(indicatorsets, downloader, folder):
+    countriesset = set()
+    datafiles = dict()
     indicatorsetsdates = dict()
     indicatorsetsindicators = dict()
     for indicatorsetcode in indicatorsets:
@@ -61,6 +61,7 @@ def get_countriesdata(indicatorsets, downloader):
         #     continue
         path = indicatorsets[indicatorsetcode]
         indfile = None
+        cntfile = None
         datafile = None
         with ZipFile(path, 'r') as zip:
             for filename in zip.namelist():
@@ -70,12 +71,16 @@ def get_countriesdata(indicatorsets, downloader):
                     indicatorsetsdates[indicatorsetcode] = ''.join(fuzzy['date'])
                 if 'LABEL' in filename:
                     indfile = filename
+                if 'COUNTRY' in filename:
+                    cntfile = filename
                 if 'DATA_NATIONAL' in filename:
                     datafile = filename
             if datafile is None:
                 raise(IOError('No data file in zip!'))
             if indfile is None:
                 raise(IOError('No indicator file in zip!'))
+            if cntfile is None:
+                raise(IOError('No country file in zip!'))
             indheaders, iterator = downloader.get_tabular_rows(zip.open(indfile), headers=1, dict_form=True,
                                                                format='csv', encoding='WINDOWS-1252')
             indicatorsetindicators = indicatorsetsindicators.get(indicatorsetcode, dict())
@@ -89,23 +94,23 @@ def get_countriesdata(indicatorsets, downloader):
                 dict_of_sets_add(indicatorsetindicators, 'shortnames', indicator_name.strip())
             indicatorsetsindicators[indicatorsetcode] = indicatorsetindicators
 
-            headers, iterator = downloader.get_tabular_rows(zip.open(datafile), headers=1, dict_form=True, format='csv', encoding='WINDOWS-1252')
+            _, iterator = downloader.get_tabular_rows(zip.open(cntfile), headers=1, dict_form=True,
+                                                               format='csv')
             for row in iterator:
-                countryiso = row['COUNTRY_ID']
-                countrydata = countriesdata.get(countryiso)
-                if countrydata is None:
-                    countrydata = dict()
-                    countriesdata[countryiso] = countrydata
-                    iso2 = Country.get_iso2_from_iso3(countryiso)
-                    countries.append({'iso3': countryiso, 'iso2': iso2, 'countryname': Country.get_country_name_from_iso3(countryiso)})
-#                if row['INDICATOR_ID'] not in ['20082', '20122', '26375']:  FOR GENERATING TEST DATA
-#                    continue
-                dict_of_lists_add(countrydata, indicatorsetcode, row)
-    return countries, headers, countriesdata, indheaders, indicatorsetsindicators, indicatorsetsdates
+                countriesset.add(row['COUNTRY_ID'])
+
+            path = zip.extract(datafile, path=folder)
+            datafiles[indicatorsetcode] = path
+        countries = list()
+        for countryiso in sorted(list(countriesset)):
+            iso2 = Country.get_iso2_from_iso3(countryiso)
+            countryname = Country.get_country_name_from_iso3(countryiso)
+            countries.append({'iso3': countryiso, 'iso2': iso2, 'countryname': countryname})
+    return countries, indheaders, indicatorsetsindicators, indicatorsetsdates, datafiles
 
 
-def generate_dataset_and_showcase(folder, indicatorsetcodes, indheaders, indicatorsetsindicators,
-                                  indicatorsetsdates, country, headers, countrydata):
+def generate_dataset_and_showcase(indicatorsetcodes, indheaders, indicatorsetsindicators,
+                                  indicatorsetsdates, country, datafiles, downloader, folder):
     countryiso = country['iso3']
     countryname = country['countryname']
     title = '%s - Education Indicators' % countryname
@@ -125,10 +130,20 @@ def generate_dataset_and_showcase(folder, indicatorsetcodes, indheaders, indicat
 
     bites_disabled = None
     categories = list()
+
+    def process_row(headers, row):
+        #                if row['INDICATOR_ID'] not in ['20082', '20122', '26375']:  FOR GENERATING TEST DATA
+        #                    continue
+        if row['COUNTRY_ID'] == countryiso:
+            return row
+        else:
+            return None
+
     for indicatorsetcode in indicatorsetcodes:
         indicatorsetname = indicatorsetcodes[indicatorsetcode]['title']
-        if indicatorsetcode not in countrydata:
-            continue
+        datafile = datafiles[indicatorsetcode]
+        headers, iterator = downloader.get_tabular_rows(datafile, headers=1, dict_form=True, format='csv',
+                                                        encoding='WINDOWS-1252', row_function=process_row)
         indicatorsetindicators = indicatorsetsindicators[indicatorsetcode]
         indicator_names = indicatorsetindicators['shortnames']
         filename = '%s_%s.csv' % (indicatorsetcode, countryiso)
@@ -143,7 +158,7 @@ def generate_dataset_and_showcase(folder, indicatorsetcodes, indheaders, indicat
         else:
             quickcharts = None
         success, results = dataset.generate_resource_from_download(
-            headers, countrydata[indicatorsetcode], hxltags, folder, filename, resourcedata, yearcol='YEAR', quickcharts=quickcharts)
+            headers, iterator, hxltags, folder, filename, resourcedata, yearcol='YEAR', quickcharts=quickcharts)
         if success is False:
             logger.warning('%s for %s has no data!' % (indicatorsetname, countryname))
             continue

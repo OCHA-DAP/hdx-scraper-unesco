@@ -188,7 +188,7 @@ def generate_dataset_and_showcase(indicatorsetcodes, indheaders, indicatorsetsin
         if resource['name'][:12] == 'QuickCharts-':
             resources.append(resources.pop(i))
     notes = ['Education indicators for %s.\n\n' % countryname,
-             "Contains data from the UNESCO Institute for Statistics [bulk data service](http://data.uis.unesco.org) ",
+             'Contains data from the UNESCO Institute for Statistics [bulk data service](http://data.uis.unesco.org) ',
              'covering the following categories: %s' % ', '.join(categories)]
     dataset['notes'] = ''.join(notes)
 

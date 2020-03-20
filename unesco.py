@@ -15,6 +15,7 @@ from urllib.request import urlretrieve
 from zipfile import ZipFile
 
 from hdx.data.dataset import Dataset
+from hdx.data.hdxobject import HDXError
 from hdx.data.showcase import Showcase
 from hdx.location.country import Country
 from hdx.utilities.dateparse import parse_date_range
@@ -124,7 +125,11 @@ def generate_dataset_and_showcase(indicatorsetcodes, indheaders, indicatorsetsin
     dataset.set_organization('18f2d467-dcf8-4b7e-bffa-b3c338ba3a7c')
     dataset.set_expected_update_frequency('Every three months')
     dataset.set_subnational(False)
-    dataset.add_country_location(countryiso)
+    try:
+        dataset.add_country_location(countryiso)
+    except HDXError as e:
+        logger.exception('%s has a problem! %s' % (countryname, e))
+        return None, None, None
     tags = ['sustainable development', 'demographics', 'socioeconomics', 'education', 'indicators', 'hxl']
     dataset.add_tags(tags)
 

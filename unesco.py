@@ -147,8 +147,6 @@ def generate_dataset_and_showcase(indicatorsetcodes, indheaders, indicatorsetsin
     for indicatorsetcode in indicatorsetcodes:
         indicatorsetname = indicatorsetcodes[indicatorsetcode]['title']
         datafile = datafiles[indicatorsetcode]
-        headers, iterator = downloader.get_tabular_rows(datafile, headers=1, dict_form=True, format='csv',
-                                                        encoding='WINDOWS-1252', row_function=process_row)
         indicatorsetindicators = indicatorsetsindicators[indicatorsetcode]
         indicator_names = indicatorsetindicators['shortnames']
         filename = '%s_%s.csv' % (indicatorsetcode, countryiso)
@@ -162,8 +160,9 @@ def generate_dataset_and_showcase(indicatorsetcodes, indheaders, indicatorsetsin
                            'cutdownhashtags': ['#indicator+code', '#country+code', '#date+year', '#indicator+value+num']}
         else:
             quickcharts = None
-        success, results = dataset.generate_resource_from_download(
-            headers, iterator, hxltags, folder, filename, resourcedata, yearcol='YEAR', quickcharts=quickcharts)
+        success, results = dataset.download_and_generate_resource(
+            downloader, datafile, hxltags, folder, filename, resourcedata, row_function=process_row, yearcol='YEAR',
+            quickcharts=quickcharts, encoding='WINDOWS-1252')
         if success is False:
             logger.warning('%s for %s has no data!' % (indicatorsetname, countryname))
             continue

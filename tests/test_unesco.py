@@ -57,8 +57,8 @@ class TestUNESCO:
             with Download(user_agent='test') as downloader:
                 result = get_countriesdata(indicatorsets, downloader, folder)
                 countries, indheaders, indicatorsetsindicators, indicatorsetsdates, datafiles = result
-                assert len(countries) == 241
-                assert countries[10] == {'countryname': 'Armenia', 'iso2': 'AM', 'iso3': 'ARM'}
+                assert len(countries) == 238
+                assert countries[9] == {'countryname': 'Armenia', 'iso2': 'AM', 'iso3': 'ARM'}
                 assert indheaders == TestUNESCO.indheaders
                 assert indicatorsets == {'EDUR': 'tests/fixtures/EDUR.zip'}
                 assert len(indicatorsetsindicators['EDUR']['rows']) == 328
@@ -81,7 +81,7 @@ class TestUNESCO:
                               'Graduates from tertiary education'}
                 indicatorsetsindicators = {'EDUN': {'rows': indicators, 'shortnames': shortnames}}
                 datafiles = {'EDUN': join('tests', 'fixtures',  'EDUN_DATA_NATIONAL.csv')}
-                dataset, showcase, bites_disabled = generate_dataset_and_showcase(
+                dataset, showcase, bites_disabled = generate_dataset_and_showcase(None,
                     indicatorsetcodes, TestUNESCO.indheaders, indicatorsetsindicators,
                     {'EDUN': '2020 February'}, country, datafiles, downloader, folder)
                 assert dataset == {'name': 'unesco-data-for-cape-verde', 'title': 'Cape Verde - Education Indicators',

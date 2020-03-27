@@ -106,21 +106,28 @@ def get_countriesdata(indicatorsets, downloader, folder):
         for countryiso in sorted(list(countriesset)):
             iso2 = Country.get_iso2_from_iso3(countryiso)
             countryname = Country.get_country_name_from_iso3(countryiso)
+            if iso2 is None or countryname is None:
+                continue
             countries.append({'iso3': countryiso, 'iso2': iso2, 'countryname': countryname})
     return countries, indheaders, indicatorsetsindicators, indicatorsetsdates, datafiles
 
 
-def generate_dataset_and_showcase(indicatorsetcodes, indheaders, indicatorsetsindicators,
+def generate_dataset_and_showcase(dataset, indicatorsetcodes, indheaders, indicatorsetsindicators,
                                   indicatorsetsdates, country, datafiles, downloader, folder):
     countryiso = country['iso3']
     countryname = country['countryname']
     title = '%s - Education Indicators' % countryname
     slugified_name = slugify('UNESCO data for %s' % countryname).lower()
     logger.info('Creating dataset: %s' % title)
-    dataset = Dataset({
-        'name': slugified_name,
-        'title': title
-    })
+    if dataset is None:
+        dataset = Dataset({
+            'name': slugified_name,
+            'title': title
+        })
+    else:
+        dataset['name'] = slugified_name
+        dataset['title'] = title
+
     dataset.set_maintainer('9d90f882-341d-4934-a55a-7a0ee7cc2f73')
     dataset.set_organization('18f2d467-dcf8-4b7e-bffa-b3c338ba3a7c')
     dataset.set_expected_update_frequency('Every three months')

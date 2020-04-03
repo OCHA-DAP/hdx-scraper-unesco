@@ -128,7 +128,7 @@ def generate_dataset_and_showcase(dataset, indicatorsetcodes, indheaders, indica
         dataset['name'] = slugified_name
         dataset['title'] = title
 
-    dataset.set_maintainer('9d90f882-341d-4934-a55a-7a0ee7cc2f73')
+    dataset.set_maintainer('a5c5296a-3206-4e51-b2de-bfe34857185f')
     dataset.set_organization('18f2d467-dcf8-4b7e-bffa-b3c338ba3a7c')
     dataset.set_expected_update_frequency('Every three months')
     dataset.set_subnational(False)

@@ -7,7 +7,6 @@ Top level script. Calls other functions that generate datasets that this script 
 import logging
 from os.path import join, expanduser
 
-from hdx.data.dataset import Dataset
 from hdx.hdx_configuration import Configuration
 from hdx.utilities.downloader import Download
 from hdx.utilities.path import get_temp_dir, progress_storing_tempdir
@@ -34,11 +33,7 @@ def main():
             get_countriesdata(indicatorsets, downloader, folder)
         logger.info('Number of countries to upload: %d' % len(countries))
         for folder, country in progress_storing_tempdir('UNESCO', countries, 'iso3'):
-            slugified_name = 'unesco-education-students-and-teachers-%s' % country['countryname'].lower()
-            dataset = Dataset.read_from_hdx(slugified_name)
-            if dataset is not None:
-                dataset.init_resources()
-            dataset, showcase, bites_disabled = generate_dataset_and_showcase(dataset,
+            dataset, showcase, bites_disabled = generate_dataset_and_showcase(
                 indicatorsetcodes, indheaders, indicatorsetsindicators, indicatorsetsdates, country, datafiles,
                 downloader, folder)
             if dataset:

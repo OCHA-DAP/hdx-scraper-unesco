@@ -112,21 +112,17 @@ def get_countriesdata(indicatorsets, downloader, folder):
     return countries, indheaders, indicatorsetsindicators, indicatorsetsdates, datafiles
 
 
-def generate_dataset_and_showcase(dataset, indicatorsetcodes, indheaders, indicatorsetsindicators,
+def generate_dataset_and_showcase(indicatorsetcodes, indheaders, indicatorsetsindicators,
                                   indicatorsetsdates, country, datafiles, downloader, folder):
     countryiso = country['iso3']
     countryname = country['countryname']
     title = '%s - Education Indicators' % countryname
     slugified_name = slugify('UNESCO data for %s' % countryname).lower()
     logger.info('Creating dataset: %s' % title)
-    if dataset is None:
-        dataset = Dataset({
-            'name': slugified_name,
-            'title': title
-        })
-    else:
-        dataset['name'] = slugified_name
-        dataset['title'] = title
+    dataset = Dataset({
+        'name': slugified_name,
+        'title': title
+    })
 
     dataset.set_maintainer('a5c5296a-3206-4e51-b2de-bfe34857185f')
     dataset.set_organization('18f2d467-dcf8-4b7e-bffa-b3c338ba3a7c')

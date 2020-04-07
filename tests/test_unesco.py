@@ -81,7 +81,7 @@ class TestUNESCO:
                               'Graduates from tertiary education'}
                 indicatorsetsindicators = {'EDUN': {'rows': indicators, 'shortnames': shortnames}}
                 datafiles = {'EDUN': join('tests', 'fixtures',  'EDUN_DATA_NATIONAL.csv')}
-                dataset, showcase, bites_disabled = generate_dataset_and_showcase(None,
+                dataset, showcase, bites_disabled = generate_dataset_and_showcase(
                     indicatorsetcodes, TestUNESCO.indheaders, indicatorsetsindicators,
                     {'EDUN': '2020 February'}, country, datafiles, downloader, folder)
                 assert dataset == {'name': 'unesco-data-for-cape-verde', 'title': 'Cape Verde - Education Indicators',

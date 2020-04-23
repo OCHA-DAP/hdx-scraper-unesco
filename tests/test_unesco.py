@@ -81,7 +81,7 @@ class TestUNESCO:
                               'Graduates from tertiary education'}
                 indicatorsetsindicators = {'EDUN': {'rows': indicators, 'shortnames': shortnames}}
                 datafiles = {'EDUN': join('tests', 'fixtures',  'EDUN_DATA_NATIONAL.csv')}
-                dataset, showcase, bites_disabled = generate_dataset_and_showcase(
+                dataset, showcase, bites_disabled, qc_indicators = generate_dataset_and_showcase(
                     indicatorsetcodes, TestUNESCO.indheaders, indicatorsetsindicators,
                     {'EDUN': '2020 February'}, country, datafiles, downloader, folder)
                 assert dataset == {'name': 'unesco-data-for-cape-verde', 'title': 'Cape Verde - Education Indicators',
@@ -101,6 +101,9 @@ class TestUNESCO:
                                     'tags': [{'name': 'demographics', 'vocabulary_id': '4e61d464-4943-4e97-973a-84673c1aaa87'}, {'name': 'indicators', 'vocabulary_id': '4e61d464-4943-4e97-973a-84673c1aaa87'}, {'name': 'hxl', 'vocabulary_id': '4e61d464-4943-4e97-973a-84673c1aaa87'}]}
 
                 assert bites_disabled == [False, False, False]
+                assert qc_indicators == [{'code': '20082', 'title': 'Enrolment in secondary education', 'unit': 'Number Enrolled'},
+                                         {'code': '20122', 'title': 'Teachers in secondary education, public institutions', 'unit': 'Number of Teachers'},
+                                         {'code': '26375', 'title': 'Graduates from tertiary education', 'unit': 'Number of Graduates'}]
                 file = 'EDUN_CPV.csv'
                 assert_files_same(join('tests', 'fixtures', file), join(folder, file))
                 file = 'qc_%s' % file

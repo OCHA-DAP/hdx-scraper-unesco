@@ -136,9 +136,6 @@ def generate_dataset_and_showcase(indicatorsetcodes, indheaders, indicatorsetsin
     tags = ['sustainable development', 'demographics', 'socioeconomics', 'education', 'indicators', 'hxl']
     dataset.add_tags(tags)
 
-    bites_disabled = None
-    categories = list()
-
     def process_row(headers, row):
         #                if row['INDICATOR_ID'] not in ['20082', '20122', '26375']:  FOR GENERATING TEST DATA
         #                    continue
@@ -147,6 +144,9 @@ def generate_dataset_and_showcase(indicatorsetcodes, indheaders, indicatorsetsin
         else:
             return None
 
+    categories = list()
+    bites_disabled = None
+    qc_indicators = None
     for indicatorsetcode in indicatorsetcodes:
         indicatorsetname = indicatorsetcodes[indicatorsetcode]['title']
         datafile = datafiles[indicatorsetcode]
@@ -159,8 +159,10 @@ def generate_dataset_and_showcase(indicatorsetcodes, indheaders, indicatorsetsin
         }
         indicators_for_qc = indicatorsetcodes[indicatorsetcode].get('quickcharts')
         if indicators_for_qc:
-            quickcharts = {'hashtag': '#indicator+code', 'values': indicators_for_qc, 'cutdown': 2,
+            values = [x['code'] for x in indicators_for_qc]
+            quickcharts = {'hashtag': '#indicator+code', 'values': values, 'cutdown': 2,
                            'cutdownhashtags': ['#indicator+code', '#country+code', '#date+year', '#indicator+value+num']}
+            qc_indicators = indicators_for_qc
         else:
             quickcharts = None
         success, results = dataset.download_and_generate_resource(
@@ -169,7 +171,9 @@ def generate_dataset_and_showcase(indicatorsetcodes, indheaders, indicatorsetsin
         if success is False:
             logger.warning('%s for %s has no data!' % (indicatorsetname, countryname))
             continue
-        bites_disabled = results.get('bites_disabled')
+        disabled_bites = results.get('bites_disabled')
+        if disabled_bites:
+            bites_disabled = disabled_bites
         filename = '%s_indicatorlist.csv' % indicatorsetcode
         resourcedata = {
             'name': '%s indicator list' % indicatorsetname,
@@ -182,13 +186,10 @@ def generate_dataset_and_showcase(indicatorsetcodes, indheaders, indicatorsetsin
             logger.warning('%s for %s has no data!' % (indicatorsetname, countryname))
             continue
         categories.append('%s (made %s)' % (indicatorsetname, indicatorsetsdates[indicatorsetcode]))
-    resources = dataset.get_resources()
-    if len(resources) == 0:
+    if dataset.number_of_resources() == 0:
         logger.warning('%s has no data!' % countryname)
         return None, None, None
-    for i, resource in enumerate(resources):
-        if resource['name'][:12] == 'QuickCharts-':
-            resources.append(resources.pop(i))
+    dataset.quickcharts_resource_last()
     notes = ['Education indicators for %s.\n\n' % countryname,
              'Contains data from the UNESCO Institute for Statistics [bulk data service](http://data.uis.unesco.org) ',
              'covering the following categories: %s' % ', '.join(categories)]
@@ -203,4 +204,5 @@ def generate_dataset_and_showcase(indicatorsetcodes, indheaders, indicatorsetsin
     })
     showcase.add_tags(tags)
 
-    return dataset, showcase, bites_disabled
+    return dataset, showcase, bites_disabled, qc_indicators
+

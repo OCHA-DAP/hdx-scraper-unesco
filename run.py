@@ -32,18 +32,18 @@ def main():
         countries, indheaders, indicatorsetsindicators, indicatorsetsdates, datafiles = \
             get_countriesdata(indicatorsets, downloader, folder)
         logger.info('Number of countries to upload: %d' % len(countries))
-        for folder, country in progress_storing_tempdir('UNESCO', countries, 'iso3'):
-            dataset, showcase, bites_disabled = generate_dataset_and_showcase(
+        for info, country in progress_storing_tempdir('UNESCO', countries, 'iso3'):
+            dataset, showcase, bites_disabled, qc_indicators = generate_dataset_and_showcase(
                 indicatorsetcodes, indheaders, indicatorsetsindicators, indicatorsetsdates, country, datafiles,
-                downloader, folder)
+                downloader, info['folder'])
             if dataset:
                 dataset.update_from_yaml()
-                dataset.generate_resource_view(-1, bites_disabled=bites_disabled)
-                dataset.create_in_hdx(remove_additional_resources=True, hxl_update=False, updated_by_script='HDX Scraper: UNESCO')
+                dataset.generate_resource_view(-1, bites_disabled=bites_disabled, indicators=qc_indicators)
+                dataset.create_in_hdx(remove_additional_resources=True, hxl_update=False, updated_by_script='HDX Scraper: UNESCO', batch=info['batch'])
                 showcase.create_in_hdx()
                 showcase.add_dataset(dataset)
 
 
 if __name__ == '__main__':
-    facade(main, hdx_site='test', user_agent_config_yaml=join(expanduser('~'), '.useragents.yml'), user_agent_lookup=lookup, project_config_yaml=join('config', 'project_configuration.yml'))
+    facade(main, user_agent_config_yaml=join(expanduser('~'), '.useragents.yml'), user_agent_lookup=lookup, project_config_yaml=join('config', 'project_configuration.yml'))
 

@@ -5,9 +5,15 @@ indicatorsetcodes:
     title: "Students and Teachers"
     showcase: "http://uis.unesco.org/#tabs-themes_tab-center-1"
     quickcharts:
-      - "20082"
-      - "20122"
-      - "26375"
+      - code: "20082"
+        title: "Enrolment in secondary education"
+        unit: "Number Enrolled"
+      - code: "20122"
+        title: "Teachers in secondary education, public institutions"
+        unit: "Number of Teachers"
+      - code: "26375"
+        title: "Graduates from tertiary education"
+        unit: "Number of Graduates"
   EDUF:
     title: "Education Expenditure and Funding"
     showcase: "http://uis.unesco.org/en/topic/education-finance"

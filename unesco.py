@@ -180,7 +180,7 @@ def generate_dataset_and_showcase(indicatorsetcodes, indheaders, indicatorsetsin
             'description': '%s indicator list with HXL tags' % indicatorsetname
         }
         indicators = indicatorsetindicators['rows']
-        success, _ = dataset.generate_resource_from_download(
+        success, _ = dataset.generate_resource_from_iterator(
             indheaders, indicators, hxltags, folder, filename, resourcedata)
         if success is False:
             logger.warning('%s for %s has no data!' % (indicatorsetname, countryname))

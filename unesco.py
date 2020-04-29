@@ -188,7 +188,7 @@ def generate_dataset_and_showcase(indicatorsetcodes, indheaders, indicatorsetsin
         categories.append('%s (made %s)' % (indicatorsetname, indicatorsetsdates[indicatorsetcode]))
     if dataset.number_of_resources() == 0:
         logger.warning('%s has no data!' % countryname)
-        return None, None, None
+        return None, None, None, None
     dataset.quickcharts_resource_last()
     notes = ['Education indicators for %s.\n\n' % countryname,
              'Contains data from the UNESCO Institute for Statistics [bulk data service](http://data.uis.unesco.org) ',

@@ -160,8 +160,8 @@ def generate_dataset_and_showcase(indicatorsetcodes, indheaders, indicatorsetsin
         indicators_for_qc = indicatorsetcodes[indicatorsetcode].get('quickcharts')
         if indicators_for_qc:
             values = [x['code'] for x in indicators_for_qc]
-            quickcharts = {'hashtag': '#indicator+code', 'values': values, 'cutdown': 2,
-                           'cutdownhashtags': ['#indicator+code', '#country+code', '#date+year', '#indicator+value+num']}
+            quickcharts = {'hashtag': '#indicator+code', 'values': values, 'numeric_hashtag': '#indicator+value+num',
+                           'cutdown': 2, 'cutdownhashtags': ['#indicator+code', '#country+code', '#date+year']}
             qc_indicators = indicators_for_qc
         else:
             quickcharts = None

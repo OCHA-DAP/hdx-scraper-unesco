@@ -92,9 +92,9 @@ class TestUNESCO:
                                    'notes': "Education indicators for Cape Verde.\n\nContains data from the UNESCO Institute for Statistics [bulk data service](http://data.uis.unesco.org) covering the following categories: Students and Teachers (made 2020 February)"}
 
                 resources = dataset.get_resources()
-                assert resources == [{'name': 'Students and Teachers data', 'description': 'Students and Teachers data with HXL tags.\n\nIndicators: Enrolment in secondary education, Graduates from tertiary education, Teachers in secondary education', 'format': 'csv', 'resource_type': 'file.upload', 'url_type': 'upload'},
-                                     {'name': 'Students and Teachers indicator list', 'description': 'Students and Teachers indicator list with HXL tags', 'format': 'csv', 'resource_type': 'file.upload', 'url_type': 'upload'},
-                                     {'name': 'QuickCharts-Students and Teachers data', 'description': 'Cut down data for QuickCharts', 'format': 'csv', 'resource_type': 'file.upload', 'url_type': 'upload'}]
+                assert resources == [{'name': 'Students and Teachers data', 'description': 'Students and Teachers data with HXL tags.\n\nIndicators: Enrolment in secondary education, Graduates from tertiary education, Teachers in secondary education', 'format': 'CSV', 'resource_type': 'file.upload', 'url_type': 'upload'},
+                                     {'name': 'Students and Teachers indicator list', 'description': 'Students and Teachers indicator list with HXL tags', 'format': 'CSV', 'resource_type': 'file.upload', 'url_type': 'upload'},
+                                     {'name': 'QuickCharts-Students and Teachers data', 'description': 'Cut down data for QuickCharts', 'format': 'CSV', 'resource_type': 'file.upload', 'url_type': 'upload'}]
 
                 assert showcase == {'name': 'unesco-data-for-cape-verde-showcase', 'title': 'Cape Verde - Education Indicators',
                                     'notes': 'Education indicators for Cape Verde', 'url': 'http://uis.unesco.org/en/country/AF', 'image_url': 'http://www.tellmaps.com/uis/internal/assets/uisheader-en.png',

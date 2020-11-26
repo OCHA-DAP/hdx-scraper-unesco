@@ -58,7 +58,7 @@ def get_countriesdata(indicatorsets, downloader, folder):
     indicatorsetsdates = dict()
     indicatorsetsindicators = dict()
     for indicatorsetcode in indicatorsets:
-        # if indicatorsetcode != 'EDUN':   FOR GENERATING TEST DATA
+        # if indicatorsetcode != 'NATMON':   FOR GENERATING TEST DATA
         #     continue
         path = indicatorsets[indicatorsetcode]
         indfile = None

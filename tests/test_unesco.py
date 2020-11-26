@@ -47,9 +47,7 @@ class TestUNESCO:
         with temp_dir('TestUNESCO') as folder:
             configuration = Configuration.read()
             result = download_indicatorsets(configuration['base_url'], folder, configuration['indicatorsetcodes'], urlretrieve=mock_urlretrieve)
-            assert result == {'DEM': join(folder, 'DEM.zip'), 'EDUF': join(folder, 'EDUF.zip'),
-                              'EDUN': join(folder, 'EDUN.zip'), 'EDUR': join(folder, 'EDUR.zip'),
-                              'SDG': join(folder, 'SDG.zip')}
+            assert result == {'DEM': join(folder, 'DEM.zip'), 'NATMON': join(folder, 'NATMON.zip'), 'SDG': join(folder, 'SDG.zip')}
 
     def test_get_countriesdata(self):
         indicatorsets = {'EDUR': join('tests', 'fixtures', 'EDUR.zip')}
@@ -70,7 +68,7 @@ class TestUNESCO:
 
     def test_generate_dataset_and_showcase(self, configuration):
         configuration = Configuration.read()
-        indicatorsetcodes = {'EDUN': configuration['indicatorsetcodes']['EDUN']}
+        indicatorsetcodes = {'NATMON': configuration['indicatorsetcodes']['NATMON']}
         with temp_dir('TestUNESCO') as folder:
             with Download(user_agent='test') as downloader:
                 country = {'iso3': 'CPV', 'iso2': 'AF', 'countryname': 'Cape Verde'}
@@ -79,11 +77,11 @@ class TestUNESCO:
                               {'INDICATOR_ID': '26375', 'INDICATOR_LABEL_EN': 'Graduates from tertiary education, both sexes (number)'}]
                 shortnames = {'Enrolment in secondary education', 'Teachers in secondary education',
                               'Graduates from tertiary education'}
-                indicatorsetsindicators = {'EDUN': {'rows': indicators, 'shortnames': shortnames}}
-                datafiles = {'EDUN': join('tests', 'fixtures',  'EDUN_DATA_NATIONAL.csv')}
+                indicatorsetsindicators = {'NATMON': {'rows': indicators, 'shortnames': shortnames}}
+                datafiles = {'NATMON': join('tests', 'fixtures',  'NATMON_DATA_NATIONAL.csv')}
                 dataset, showcase, bites_disabled, qc_indicators = generate_dataset_and_showcase(
                     indicatorsetcodes, TestUNESCO.indheaders, indicatorsetsindicators,
-                    {'EDUN': '2020 February'}, country, datafiles, downloader, folder)
+                    {'NATMON': '2020 February'}, country, datafiles, downloader, folder)
                 assert dataset == {'name': 'unesco-data-for-cape-verde', 'title': 'Cape Verde - Education Indicators',
                                    'maintainer': 'a5c5296a-3206-4e51-b2de-bfe34857185f', 'owner_org': '18f2d467-dcf8-4b7e-bffa-b3c338ba3a7c',
                                    'data_update_frequency': '90', 'subnational': '0', 'groups': [{'name': 'cpv'}],
@@ -92,9 +90,9 @@ class TestUNESCO:
                                    'notes': "Education indicators for Cape Verde.\n\nContains data from the UNESCO Institute for Statistics [bulk data service](http://data.uis.unesco.org) covering the following categories: Students and Teachers (made 2020 February)"}
 
                 resources = dataset.get_resources()
-                assert resources == [{'name': 'Students and Teachers data', 'description': 'Students and Teachers data with HXL tags.\n\nIndicators: Enrolment in secondary education, Graduates from tertiary education, Teachers in secondary education', 'format': 'CSV', 'resource_type': 'file.upload', 'url_type': 'upload'},
-                                     {'name': 'Students and Teachers indicator list', 'description': 'Students and Teachers indicator list with HXL tags', 'format': 'CSV', 'resource_type': 'file.upload', 'url_type': 'upload'},
-                                     {'name': 'QuickCharts-Students and Teachers data', 'description': 'Cut down data for QuickCharts', 'format': 'CSV', 'resource_type': 'file.upload', 'url_type': 'upload'}]
+                assert resources == [{'name': 'Students and Teachers data', 'description': 'Students and Teachers data with HXL tags.\n\nIndicators: Enrolment in secondary education, Graduates from tertiary education, Teachers in secondary education', 'format': 'csv', 'resource_type': 'file.upload', 'url_type': 'upload'},
+                                     {'name': 'Students and Teachers indicator list', 'description': 'Students and Teachers indicator list with HXL tags', 'format': 'csv', 'resource_type': 'file.upload', 'url_type': 'upload'},
+                                     {'name': 'QuickCharts-Students and Teachers data', 'description': 'Cut down data for QuickCharts', 'format': 'csv', 'resource_type': 'file.upload', 'url_type': 'upload'}]
 
                 assert showcase == {'name': 'unesco-data-for-cape-verde-showcase', 'title': 'Cape Verde - Education Indicators',
                                     'notes': 'Education indicators for Cape Verde', 'url': 'http://uis.unesco.org/en/country/AF', 'image_url': 'http://www.tellmaps.com/uis/internal/assets/uisheader-en.png',
@@ -104,9 +102,9 @@ class TestUNESCO:
                 assert qc_indicators == [{'code': '20082', 'title': 'Enrolment in secondary education', 'unit': 'Number Enrolled'},
                                          {'code': '20122', 'title': 'Teachers in secondary education, public institutions', 'unit': 'Number of Teachers'},
                                          {'code': '26375', 'title': 'Graduates from tertiary education', 'unit': 'Number of Graduates'}]
-                file = 'EDUN_CPV.csv'
+                file = 'NATMON_CPV.csv'
                 assert_files_same(join('tests', 'fixtures', file), join(folder, file))
                 file = 'qc_%s' % file
                 assert_files_same(join('tests', 'fixtures', file), join(folder, file))
-                file = 'EDUN_indicatorlist.csv'
+                file = 'NATMON_indicatorlist.csv'
                 assert_files_same(join('tests', 'fixtures', file), join(folder, file))

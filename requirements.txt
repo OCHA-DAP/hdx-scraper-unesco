@@ -1,4 +1,4 @@
 # Python 3.7+ is a requirement
 python-slugify==4.0.1
-hdx-python-api==4.6.3
+hdx-python-api==4.7.5
 -r docker-requirements.txt

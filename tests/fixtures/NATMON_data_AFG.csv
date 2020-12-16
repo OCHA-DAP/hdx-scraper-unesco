@@ -1,4 +1,5 @@
 INDICATOR_ID,COUNTRY_ID,YEAR,VALUE,MAGNITUDE,QUALIFIER
+#indicator+code,#country+code,#date+year,#indicator+value+num,,
 10,AFG,1997,0,NA,
 10,AFG,1998,0,NA,
 10,AFG,1999,0,NA,

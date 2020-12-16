@@ -16,6 +16,7 @@ from zipfile import ZipFile
 
 from hdx.data.dataset import Dataset
 from hdx.data.hdxobject import HDXError
+from hdx.data.resource import Resource
 from hdx.data.showcase import Showcase
 from hdx.location.country import Country
 from hdx.utilities.dateparse import parse_date_range
@@ -24,7 +25,7 @@ from slugify import slugify
 
 logger = logging.getLogger(__name__)
 
-hxltags = {'INDICATOR_ID': '#indicator+code', 'INDICATOR_LABEL_EN': '#indicator+name', 'COUNTRY_ID': '#country+code', 'YEAR': '#date+year', 'VALUE': '#indicator+value+num'}
+hxltags = {'INDICATOR_ID': '#indicator+code', 'INDICATOR_LABEL_EN': '#indicator+name', 'COUNTRY_ID': '#country+code', 'YEAR': '#date+year', 'VALUE': '#indicator+value+num', 'TYPE': '#description+type', 'METADATA': '#description'}
 
 
 def download_indicatorsets(base_url, folder, indicatorsetcodes, urlretrieve=urlretrieve):
@@ -58,11 +59,10 @@ def get_countriesdata(indicatorsets, downloader, folder):
     indicatorsetsdates = dict()
     indicatorsetsindicators = dict()
     for indicatorsetcode in indicatorsets:
-        # if indicatorsetcode != 'NATMON':   FOR GENERATING TEST DATA
-        #     continue
         path = indicatorsets[indicatorsetcode]
         indfile = None
         cntfile = None
+        metadatafile = None
         datafile = None
         with ZipFile(path, 'r') as zip:
             for filename in zip.namelist():
@@ -74,6 +74,8 @@ def get_countriesdata(indicatorsets, downloader, folder):
                     indfile = filename
                 if 'COUNTRY' in filename:
                     cntfile = filename
+                if 'METADATA' in filename:
+                    metadatafile = filename
                 if 'DATA_NATIONAL' in filename:
                     datafile = filename
             if datafile is None:
@@ -100,8 +102,12 @@ def get_countriesdata(indicatorsets, downloader, folder):
             for row in iterator:
                 countriesset.add(row['COUNTRY_ID'])
 
-            path = zip.extract(datafile, path=folder)
-            datafiles[indicatorsetcode] = path
+            if metadatafile:
+                metadatapath = zip.extract(metadatafile, path=folder)
+            else:
+                metadatapath = None
+            datapath = zip.extract(datafile, path=folder)
+            datafiles[indicatorsetcode] = (metadatapath, datapath)
         countries = list()
         for countryiso in sorted(list(countriesset)):
             iso2 = Country.get_iso2_from_iso3(countryiso)
@@ -137,8 +143,6 @@ def generate_dataset_and_showcase(indicatorsetcodes, indheaders, indicatorsetsin
     dataset.add_tags(tags)
 
     def process_row(headers, row):
-        #                if row['INDICATOR_ID'] not in ['20082', '20122', '26375']:  FOR GENERATING TEST DATA
-        #                    continue
         if row['COUNTRY_ID'] == countryiso:
             return row
         else:
@@ -147,14 +151,16 @@ def generate_dataset_and_showcase(indicatorsetcodes, indheaders, indicatorsetsin
     categories = list()
     bites_disabled = None
     qc_indicators = None
+
     for indicatorsetcode in indicatorsetcodes:
         indicatorsetname = indicatorsetcodes[indicatorsetcode]['title']
-        datafile = datafiles[indicatorsetcode]
+        metadatafile, datafile = datafiles[indicatorsetcode]
         indicatorsetindicators = indicatorsetsindicators[indicatorsetcode]
         indicator_names = indicatorsetindicators['shortnames']
-        filename = '%s_%s.csv' % (indicatorsetcode, countryiso)
+        filename = '%s_data_%s.csv' % (indicatorsetcode, countryiso)
+        resourcename = '%s data' % indicatorsetname
         resourcedata = {
-            'name': '%s data' % indicatorsetname,
+            'name': resourcename,
             'description': '%s data with HXL tags.\n\nIndicators: %s' % (indicatorsetname, ', '.join(sorted(indicator_names)))
         }
         indicators_for_qc = indicatorsetcodes[indicatorsetcode].get('quickcharts')
@@ -167,25 +173,37 @@ def generate_dataset_and_showcase(indicatorsetcodes, indheaders, indicatorsetsin
             quickcharts = None
         success, results = dataset.download_and_generate_resource(
             downloader, datafile, hxltags, folder, filename, resourcedata, row_function=process_row, yearcol='YEAR',
-            quickcharts=quickcharts, encoding='WINDOWS-1252')
+            quickcharts=quickcharts)
         if success is False:
-            logger.warning('%s for %s has no data!' % (indicatorsetname, countryname))
+            logger.warning('%s for %s has no data!' % (resourcename, countryname))
             continue
         disabled_bites = results.get('bites_disabled')
         if disabled_bites:
             bites_disabled = disabled_bites
-        filename = '%s_indicatorlist.csv' % indicatorsetcode
+        filename = '%s_indicatorlist_%s.csv' % (indicatorsetcode, countryiso)
+        resourcename = '%s indicator list' % indicatorsetname
         resourcedata = {
-            'name': '%s indicator list' % indicatorsetname,
+            'name': resourcename,
             'description': '%s indicator list with HXL tags' % indicatorsetname
         }
         indicators = indicatorsetindicators['rows']
         success, _ = dataset.generate_resource_from_iterator(
             indheaders, indicators, hxltags, folder, filename, resourcedata)
         if success is False:
-            logger.warning('%s for %s has no data!' % (indicatorsetname, countryname))
+            logger.warning('%s for %s has no data!' % (resourcename, countryname))
             continue
         categories.append('%s (made %s)' % (indicatorsetname, indicatorsetsdates[indicatorsetcode]))
+        if metadatafile:
+            filename = '%s_metadata_%s.csv' % (indicatorsetcode, countryiso)
+            resourcename = '%s metadata' % indicatorsetname
+            resourcedata = {
+                'name': resourcename,
+                'description': '%s metadata with HXL tags' % indicatorsetname}
+            success, results = dataset.download_and_generate_resource(
+                downloader, metadatafile, hxltags, folder, filename, resourcedata, row_function=process_row)
+            if success is False:
+                logger.warning('%s for %s has no data!' % (resourcename, countryname))
+                continue
     if dataset.number_of_resources() == 0:
         logger.warning('%s has no data!' % countryname)
         return None, None, None, None

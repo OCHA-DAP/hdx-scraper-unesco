@@ -2,7 +2,7 @@
 base_url: "ftp://ftp.uis.unesco.org/BDDS"
 indicatorsetcodes:
   NATMON:
-    title: "Students and Teachers"
+    title: "National Monitoring"
     showcase: "http://uis.unesco.org/#tabs-themes_tab-center-1"
     quickcharts:
       - code: "GER.1t3"

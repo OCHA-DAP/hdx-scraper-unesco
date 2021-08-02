@@ -86,7 +86,7 @@ class TestUNESCO:
                                    'maintainer': 'a5c5296a-3206-4e51-b2de-bfe34857185f', 'owner_org': '18f2d467-dcf8-4b7e-bffa-b3c338ba3a7c',
                                    'data_update_frequency': '90', 'subnational': '0', 'groups': [{'name': 'afg'}],
                                    'tags': [{'name': 'demographics', 'vocabulary_id': '4e61d464-4943-4e97-973a-84673c1aaa87'}, {'name': 'indicators', 'vocabulary_id': '4e61d464-4943-4e97-973a-84673c1aaa87'}, {'name': 'hxl', 'vocabulary_id': '4e61d464-4943-4e97-973a-84673c1aaa87'}],
-                                   'dataset_date': '01/01/1970-12/31/2020',
+                                   'dataset_date': '[1970-01-01T00:00:00 TO 2020-12-31T00:00:00]',
                                    'notes': "Education indicators for Afghanistan.\n\nContains data from the UNESCO Institute for Statistics [bulk data service](http://data.uis.unesco.org) covering the following categories: National Monitoring (made 2020 September)"}
 
                 resources = dataset.get_resources()

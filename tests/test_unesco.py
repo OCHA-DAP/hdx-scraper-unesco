@@ -101,7 +101,7 @@ class TestUNESCO:
                                      {'name': 'QuickCharts-National Monitoring data', 'description': 'Cut down data for QuickCharts', 'format': 'csv', 'resource_type': 'file.upload', 'url_type': 'upload'}]
 
                 assert showcase == {'name': 'unesco-data-for-afghanistan-showcase', 'title': 'Afghanistan - Education Indicators',
-                                    'notes': 'Education indicators for Afghanistan', 'url': 'http://uis.unesco.org/en/country/AF', 'image_url': 'http://www.tellmaps.com/uis/internal/assets/uisheader-en.png',
+                                    'notes': 'Education indicators for Afghanistan', 'url': 'http://uis.unesco.org/en/country/AF', 'image_url': 'https://assets.hakeema.com/matterfund/unit/files/6639-0afa28d6-6ec543.png',
                                     'tags': [{'name': 'demographics', 'vocabulary_id': '4e61d464-4943-4e97-973a-84673c1aaa87'}, {'name': 'indicators', 'vocabulary_id': '4e61d464-4943-4e97-973a-84673c1aaa87'}, {'name': 'hxl', 'vocabulary_id': '4e61d464-4943-4e97-973a-84673c1aaa87'}]}
 
                 assert bites_disabled == [False, False, False]

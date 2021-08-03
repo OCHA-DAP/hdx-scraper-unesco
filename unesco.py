@@ -218,7 +218,7 @@ def generate_dataset_and_showcase(indicatorsetcodes, indheaders, indicatorsetsin
         'title': title,
         'notes': 'Education indicators for %s' % countryname,
         'url': 'http://uis.unesco.org/en/country/%s' % country['iso2'],
-        'image_url': 'http://www.tellmaps.com/uis/internal/assets/uisheader-en.png'
+        'image_url': 'https://assets.hakeema.com/matterfund/unit/files/6639-0afa28d6-6ec543.png'
     })
     showcase.add_tags(tags)
 

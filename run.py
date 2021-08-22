@@ -11,8 +11,7 @@ from os.path import join, expanduser
 
 from hdx.hdx_configuration import Configuration
 from hdx.utilities.downloader import Download
-from hdx.utilities.path import get_temp_dir, progress_storing_tempdir, wheretostart_tempdir_batch, \
-    progress_storing_folder
+from hdx.utilities.path import wheretostart_tempdir_batch, progress_storing_folder
 
 from unesco import download_indicatorsets, get_countriesdata, generate_dataset_and_showcase
 

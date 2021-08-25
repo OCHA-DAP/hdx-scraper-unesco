@@ -1,5 +1,5 @@
  ### Collector for UNESCO's Datasets
-[![Build Status](https://travis-ci.org/OCHA-DAP/hdx-scraper-unesco.svg?branch=master&ts=1)](https://travis-ci.org/OCHA-DAP/hdx-scraper-unesco) [![Coverage Status](https://coveralls.io/repos/github/OCHA-DAP/hdx-scraper-unesco/badge.svg?branch=master&ts=1)](https://coveralls.io/github/OCHA-DAP/hdx-scraper-unesco?branch=master)
+[![Build Status](https://travis-ci.org/OCHA-DAP/hdx-scraper-unesco.svg?branch=main&ts=1)](https://travis-ci.org/OCHA-DAP/hdx-scraper-unesco) [![Coverage Status](https://coveralls.io/repos/github/OCHA-DAP/hdx-scraper-unesco/badge.svg?branch=main&ts=1)](https://coveralls.io/github/OCHA-DAP/hdx-scraper-unesco?branch=main)
 
 This script connects to the [UNESCO bulk downloads](https://apiportal.uis.unesco.org/bdds) and extracts data for 5 endpoints (DEM_ECO, EDU_FINANCE, EDU_NON_FINANCE, EDU_REGIONAL_MODULE, SDG4) country by country creating one dataset (with 5 endpoints as resources) per country in HDX. It makes in the order of 10 reads from UNESCO and 1000 read/writes (API calls) to HDX in total. It creates around 120 temporary files, the largest, a zip, being under 100Mb. It is run when UNESCO make changes (not in their data but for example in their endpoints or API), in practice this is quarterly. 
 

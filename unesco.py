@@ -93,7 +93,8 @@ def get_countriesdata(indicatorsets, downloader, folder):
             if cntfile is None:
                 raise (OSError("No country file in zip!"))
             indheaders, iterator = downloader.get_tabular_rows(
-                zip.open(indfile),
+                path,
+                innerpath=indfile,
                 headers=1,
                 dict_form=True,
                 format="csv",
@@ -115,7 +116,7 @@ def get_countriesdata(indicatorsets, downloader, folder):
             indicatorsetsindicators[indicatorsetcode] = indicatorsetindicators
 
             _, iterator = downloader.get_tabular_rows(
-                zip.open(cntfile), headers=1, dict_form=True, format="csv"
+                path, innerpath=cntfile, headers=1, dict_form=True, format="csv"
             )
             for row in iterator:
                 countriesset.add(row["COUNTRY_ID"])

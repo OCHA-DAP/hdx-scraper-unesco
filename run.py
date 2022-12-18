@@ -8,11 +8,10 @@ import logging
 import sys
 from os.path import expanduser, join
 
+from hdx.api.configuration import Configuration
 from hdx.facades.keyword_arguments import facade
-from hdx.hdx_configuration import Configuration
 from hdx.utilities.downloader import Download
 from hdx.utilities.path import progress_storing_folder, wheretostart_tempdir_batch
-
 from unesco import (
     download_indicatorsets,
     generate_dataset_and_showcase,

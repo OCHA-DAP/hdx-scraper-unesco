@@ -1,4 +1,4 @@
-INDICATOR_ID,INDICATOR_LABEL_EN
+indicator_id,indicator_label_en
 #indicator+code,#indicator+name
 GER.1t3,"Gross enrolment ratio, primary and secondary, both sexes (number)"
 XGDP.1.FSgov,"Government expenditure on primary education, both sexes (number)"

@@ -22,8 +22,8 @@ from unesco import (
 
 
 class TestUNESCO:
-    headers = ["INDICATOR_ID", "COUNTRY_ID", "YEAR", "VALUE", "MAGNITUDE", "QUALIFIER"]
-    indheaders = ["INDICATOR_ID", "INDICATOR_LABEL_EN"]
+    headers = ["indicator_id", "COUNTRY_ID", "YEAR", "VALUE", "MAGNITUDE", "QUALIFIER"]
+    indheaders = ["indicator_id", "indicator_label_en"]
 
     @pytest.fixture(scope="function")
     def configuration(self):
@@ -101,8 +101,8 @@ class TestUNESCO:
                 assert indicatorsets == {"NATMON": "tests/fixtures/NATMON.zip"}
                 assert len(indicatorsetsindicators["NATMON"]["rows"]) == 1055
                 assert indicatorsetsindicators["NATMON"]["rows"][80] == {
-                    "INDICATOR_ID": "26442",
-                    "INDICATOR_LABEL_EN": "Africa: Students from Ghana, both sexes (number)",
+                    "indicator_id": "26442",
+                    "indicator_label_en": "Africa: Students from Ghana, both sexes (number)",
                 }
                 assert len(indicatorsetsindicators["NATMON"]["shortnames"]) == 246
                 assert (
@@ -112,8 +112,16 @@ class TestUNESCO:
                 assert indicatorsetsdates == {"NATMON": "2020 September"}
                 assert datafiles == {
                     "NATMON": (
-                        join(os.sep, "tmp", "TestUNESCO", "NATMON_METADATA.csv"),
-                        join(os.sep, "tmp", "TestUNESCO", "NATMON_DATA_NATIONAL.csv"),
+                        join(
+                            os.sep, "tmp", "TestUNESCO", "NATMON", "NATMON_METADATA.csv"
+                        ),
+                        join(
+                            os.sep,
+                            "tmp",
+                            "TestUNESCO",
+                            "NATMON",
+                            "NATMON_DATA_NATIONAL.csv",
+                        ),
                     )
                 }
 
@@ -125,16 +133,16 @@ class TestUNESCO:
                 country = {"iso3": "AFG", "iso2": "AF", "countryname": "Afghanistan"}
                 indicators = [
                     {
-                        "INDICATOR_ID": "GER.1t3",
-                        "INDICATOR_LABEL_EN": "Gross enrolment ratio, primary and secondary, both sexes (number)",
+                        "indicator_id": "GER.1t3",
+                        "indicator_label_en": "Gross enrolment ratio, primary and secondary, both sexes (number)",
                     },
                     {
-                        "INDICATOR_ID": "XGDP.1.FSgov",
-                        "INDICATOR_LABEL_EN": "Government expenditure on primary education, both sexes (number)",
+                        "indicator_id": "XGDP.1.FSgov",
+                        "indicator_label_en": "Government expenditure on primary education, both sexes (number)",
                     },
                     {
-                        "INDICATOR_ID": "XGDP.2.FSgov",
-                        "INDICATOR_LABEL_EN": "Government expenditure on lower secondary education, both sexes (number)",
+                        "indicator_id": "XGDP.2.FSgov",
+                        "indicator_label_en": "Government expenditure on lower secondary education, both sexes (number)",
                     },
                 ]
                 shortnames = {
@@ -229,7 +237,7 @@ class TestUNESCO:
                     "title": "Afghanistan - Education Indicators",
                     "notes": "Education indicators for Afghanistan",
                     "url": "http://uis.unesco.org/en/country/AF",
-                    "image_url": "https://assets.hakeema.com/matterfund/unit/files/6639-0afa28d6-6ec543.png",
+                    "image_url": "https://uis.unesco.org/sites/default/files/logo-website_1.png",
                     "tags": [
                         {
                             "name": "demographics",
@@ -265,10 +273,18 @@ class TestUNESCO:
                     },
                 ]
                 file = "NATMON_data_AFG.csv"
-                assert_files_same(join("tests", "fixtures", file), join(folder, file))
+                assert_files_same(
+                    join("tests", "fixtures", file), join(folder, "NATMON", file)
+                )
                 file = "qc_NATMON_data_AFG.csv"
-                assert_files_same(join("tests", "fixtures", file), join(folder, file))
+                assert_files_same(
+                    join("tests", "fixtures", file), join(folder, "NATMON", file)
+                )
                 file = "NATMON_indicatorlist_AFG.csv"
-                assert_files_same(join("tests", "fixtures", file), join(folder, file))
+                assert_files_same(
+                    join("tests", "fixtures", file), join(folder, "NATMON", file)
+                )
                 file = "NATMON_metadata_AFG.csv"
-                assert_files_same(join("tests", "fixtures", file), join(folder, file))
+                assert_files_same(
+                    join("tests", "fixtures", file), join(folder, "NATMON", file)
+                )

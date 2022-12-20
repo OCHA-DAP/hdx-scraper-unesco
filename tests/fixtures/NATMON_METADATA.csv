@@ -1,4 +1,4 @@
-INDICATOR_ID,COUNTRY_ID,YEAR,TYPE,METADATA
+indicator_id,country_id,year,type,metadata
 NART.1,AFG,2011,Source:Data sources,Afghanistan MICS 2010-11. The survey collected data on school attendance for age 5-24 and educational attainment for age 5 and above.
 NART.1,AFG,2015,Source:Data sources,Afghanistan DHS 2015. The survey collected data on school attendance for age 5-24 and educational attainment for age 5 and above.
 NART.1.F,AFG,2011,Source:Data sources,Afghanistan MICS 2010-11. The survey collected data on school attendance for age 5-24 and educational attainment for age 5 and above.

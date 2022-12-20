@@ -1,4 +1,4 @@
-INDICATOR_ID,COUNTRY_ID,YEAR,VALUE
+indicator_id,country_id,year,value
 #indicator+code,#country+code,#date+year,#indicator+value+num
 GER.1t3,AFG,1970,20.96668
 GER.1t3,AFG,1971,21.89383

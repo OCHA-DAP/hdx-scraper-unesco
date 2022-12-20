@@ -8,8 +8,9 @@ Reads UNESCO bulk files and creates datasets.
 """
 import logging
 import re
-from os import remove
-from os.path import exists, join
+from os import remove, rename
+from os.path import exists, join, split
+from shutil import copyfileobj
 from urllib.request import urlretrieve
 from zipfile import ZipFile
 
@@ -24,13 +25,13 @@ from slugify import slugify
 logger = logging.getLogger(__name__)
 
 hxltags = {
-    "INDICATOR_ID": "#indicator+code",
-    "INDICATOR_LABEL_EN": "#indicator+name",
-    "COUNTRY_ID": "#country+code",
-    "YEAR": "#date+year",
-    "VALUE": "#indicator+value+num",
-    "TYPE": "#description+type",
-    "METADATA": "#description",
+    "indicator_id": "#indicator+code",
+    "indicator_label_en": "#indicator+name",
+    "country_id": "#country+code",
+    "year": "#date+year",
+    "value": "#indicator+value+num",
+    "type": "#description+type",
+    "metadata": "#description",
 }
 
 
@@ -51,14 +52,33 @@ def download_indicatorsets(
                         continue
                 remove(statusfile)
             remove(path)
-        url = f"{base_url}/{filename}"
+        url = f"{base_url}{filename}"
         path, headers = urlretrieve(url, path)
-        if headers.get_content_type() != "application/zip":
+        if "zip" not in headers.get_content_type():
             raise OSError(f"Problem with {path}!")
         with open(statusfile, "w") as f:
             f.write("OK")
             indicatorsets[indicatorsetcode] = path
     return indicatorsets
+
+
+def get_filepath(zipfile, inputfile, outputfolder, indicatorsetcode):
+    folder, filename = split(inputfile)
+    origfolder = join(outputfolder, indicatorsetcode)
+    if folder:
+        zipfolder = outputfolder
+    else:
+        zipfolder = origfolder
+    inputpath = zipfile.extract(inputfile, path=zipfolder)
+    origpath = join(origfolder, f"orig_{filename}")
+
+    rename(inputpath, origpath)
+    with open(origpath, mode="rt") as inputfp:
+        line = inputfp.readline().lower()
+        with open(inputpath, "w") as outputfp:
+            outputfp.write(line)
+            copyfileobj(inputfp, outputfp)
+    return inputpath
 
 
 def get_countriesdata(indicatorsets, downloader, folder):
@@ -72,8 +92,8 @@ def get_countriesdata(indicatorsets, downloader, folder):
         cntfile = None
         metadatafile = None
         datafile = None
-        with ZipFile(path, "r") as zip:
-            for filename in zip.namelist():
+        with ZipFile(path, "r") as zipfile:
+            for filename in zipfile.namelist():
                 if "README" in filename:
                     fuzzy = dict()
                     parse_date_range(filename.replace("_", " "), fuzzy=fuzzy)
@@ -92,9 +112,9 @@ def get_countriesdata(indicatorsets, downloader, folder):
                 raise (OSError("No indicator file in zip!"))
             if cntfile is None:
                 raise (OSError("No country file in zip!"))
+            indpath = get_filepath(zipfile, indfile, folder, indicatorsetcode)
             indheaders, iterator = downloader.get_tabular_rows(
-                path,
-                innerpath=indfile,
+                indpath,
                 headers=1,
                 dict_form=True,
                 format="csv",
@@ -105,7 +125,7 @@ def get_countriesdata(indicatorsets, downloader, folder):
             )
             for row in iterator:
                 dict_of_lists_add(indicatorsetindicators, "rows", row)
-                indicator_name = row["INDICATOR_LABEL_EN"]
+                indicator_name = row["indicator_label_en"]
                 ind0 = re.sub(r"\s+", " ", indicator_name)
                 ind1, _, _ = ind0.partition(",")
                 ind2, _, _ = ind1.partition("(")
@@ -115,17 +135,20 @@ def get_countriesdata(indicatorsets, downloader, folder):
                 )
             indicatorsetsindicators[indicatorsetcode] = indicatorsetindicators
 
+            cntpath = get_filepath(zipfile, cntfile, folder, indicatorsetcode)
             _, iterator = downloader.get_tabular_rows(
-                path, innerpath=cntfile, headers=1, dict_form=True, format="csv"
+                cntpath, headers=1, dict_form=True, format="csv"
             )
             for row in iterator:
-                countriesset.add(row["COUNTRY_ID"])
+                countriesset.add(row["country_id"])
 
             if metadatafile:
-                metadatapath = zip.extract(metadatafile, path=folder)
+                metadatapath = get_filepath(
+                    zipfile, metadatafile, folder, indicatorsetcode
+                )
             else:
                 metadatapath = None
-            datapath = zip.extract(datafile, path=folder)
+            datapath = get_filepath(zipfile, datafile, folder, indicatorsetcode)
             datafiles[indicatorsetcode] = (metadatapath, datapath)
         countries = list()
         for countryiso in sorted(list(countriesset)):
@@ -171,12 +194,13 @@ def generate_dataset_and_showcase(
         "socioeconomics",
         "education",
         "indicators",
+        "sustainable development goals-sdg",
         "hxl",
     ]
     dataset.add_tags(tags)
 
     def process_row(headers, row):
-        if row["COUNTRY_ID"] == countryiso:
+        if row["country_id"] == countryiso:
             return row
         else:
             return None
@@ -209,15 +233,16 @@ def generate_dataset_and_showcase(
             qc_indicators = indicators_for_qc
         else:
             quickcharts = None
+        outputfolder = join(folder, indicatorsetcode)
         success, results = dataset.download_and_generate_resource(
             downloader,
             datafile,
             hxltags,
-            folder,
+            outputfolder,
             filename,
             resourcedata,
             row_function=process_row,
-            yearcol="YEAR",
+            yearcol="year",
             quickcharts=quickcharts,
         )
         if success is False:
@@ -234,7 +259,7 @@ def generate_dataset_and_showcase(
         }
         indicators = indicatorsetindicators["rows"]
         success, _ = dataset.generate_resource_from_iterator(
-            indheaders, indicators, hxltags, folder, filename, resourcedata
+            indheaders, indicators, hxltags, outputfolder, filename, resourcedata
         )
         if success is False:
             logger.warning(f"{resourcename} for {countryname} has no data!")
@@ -253,7 +278,7 @@ def generate_dataset_and_showcase(
                 downloader,
                 metadatafile,
                 hxltags,
-                folder,
+                outputfolder,
                 filename,
                 resourcedata,
                 row_function=process_row,
@@ -278,7 +303,7 @@ def generate_dataset_and_showcase(
             "title": title,
             "notes": f"Education indicators for {countryname}",
             "url": f"http://uis.unesco.org/en/country/{country['iso2']}",
-            "image_url": "https://assets.hakeema.com/matterfund/unit/files/6639-0afa28d6-6ec543.png",
+            "image_url": "https://uis.unesco.org/sites/default/files/logo-website_1.png",
         }
     )
     showcase.add_tags(tags)

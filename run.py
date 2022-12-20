@@ -6,6 +6,7 @@ Top level script. Calls other functions that generate datasets that this script 
 import argparse
 import logging
 import sys
+from os import getenv
 from os.path import expanduser, join
 
 from hdx.api.configuration import Configuration
@@ -23,10 +24,11 @@ logger = logging.getLogger(__name__)
 lookup = "hdx-scraper-unesco"
 
 
-def main(test=False, **ignore):
+def main(base_url=None, test=False, **ignore):
     """Generate dataset and create it in HDX"""
 
-    base_url = Configuration.read()["base_url"]
+    if base_url is None:
+        raise ValueError("Must supply base_url ")
     with Download() as downloader:
         with wheretostart_tempdir_batch(lookup) as info:
             folder = info["folder"]
@@ -98,15 +100,22 @@ def main(test=False, **ignore):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="unesco")
+    parser.add_argument("-bu", "--base_url", default=None, help="Base url to use")
     parser.add_argument(
         "-t", "--test", default=False, action="store_true", help="Generate test data"
     )
     args = parser.parse_args()
+    base_url = args.base_url
+    if base_url is None:
+        base_url = getenv("BASE_URL")
+        if base_url is None:
+            base_url = "https://apimgmtstzgjpfeq2u763lag.blob.core.windows.net/content/MediaLibrary/bdds/Edu-september-2022/"
     facade(
         main,
         hdx_site="stage",
         user_agent_config_yaml=join(expanduser("~"), ".useragents.yml"),
         user_agent_lookup=lookup,
         project_config_yaml=join("config", "project_configuration.yml"),
+        base_url=base_url,
         test=args.test,
     )

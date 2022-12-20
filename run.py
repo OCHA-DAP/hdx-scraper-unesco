@@ -76,24 +76,16 @@ def main(base_url=None, test=False, **ignore):
                     dataset.generate_resource_view(
                         -1, bites_disabled=bites_disabled, indicators=qc_indicators
                     )
-                    ordered_resource_names = [
-                        x["name"] for x in dataset.get_resources()
-                    ]
                     dataset.create_in_hdx(
+                        match_resources_by_metadata=False,
                         remove_additional_resources=True,
+                        match_resource_order=True,
                         hxl_update=False,
                         updated_by_script="HDX Scraper: UNESCO",
                         batch=batch,
                     )
                     showcase.create_in_hdx()
                     showcase.add_dataset(dataset)
-                    sorted_resources = sorted(
-                        dataset.get_resources(),
-                        key=lambda x: ordered_resource_names.index(x["name"]),
-                    )
-                    dataset.reorder_resources(
-                        [x["id"] for x in sorted_resources], hxl_update=True
-                    )
                     if test:
                         sys.exit(0)
 

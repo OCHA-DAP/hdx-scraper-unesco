@@ -85,6 +85,8 @@ def main(base_url=None, test=False, **ignore):
                         updated_by_script="HDX Scraper: UNESCO",
                         batch=batch,
                     )
+                    showcase.create_in_hdx()
+                    showcase.add_dataset(dataset)
                     sorted_resources = sorted(
                         dataset.get_resources(),
                         key=lambda x: ordered_resource_names.index(x["name"]),
@@ -92,8 +94,6 @@ def main(base_url=None, test=False, **ignore):
                     dataset.reorder_resources(
                         [x["id"] for x in sorted_resources], hxl_update=True
                     )
-                    showcase.create_in_hdx()
-                    showcase.add_dataset(dataset)
                     if test:
                         sys.exit(0)
 

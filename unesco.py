@@ -82,6 +82,7 @@ def get_filepath(zipfile, inputfile, outputfolder, indicatorsetcode):
 
 
 def get_countriesdata(indicatorsets, downloader, folder):
+    indheaders = None
     countriesset = set()
     datafiles = dict()
     indicatorsetsdates = dict()
@@ -150,15 +151,13 @@ def get_countriesdata(indicatorsets, downloader, folder):
                 metadatapath = None
             datapath = get_filepath(zipfile, datafile, folder, indicatorsetcode)
             datafiles[indicatorsetcode] = (metadatapath, datapath)
-        countries = list()
-        for countryiso in sorted(list(countriesset)):
-            iso2 = Country.get_iso2_from_iso3(countryiso)
-            countryname = Country.get_country_name_from_iso3(countryiso)
-            if iso2 is None or countryname is None:
-                continue
-            countries.append(
-                {"iso3": countryiso, "iso2": iso2, "countryname": countryname}
-            )
+    countries = list()
+    for countryiso in sorted(list(countriesset)):
+        iso2 = Country.get_iso2_from_iso3(countryiso)
+        countryname = Country.get_country_name_from_iso3(countryiso)
+        if iso2 is None or countryname is None:
+            continue
+        countries.append({"iso3": countryiso, "iso2": iso2, "countryname": countryname})
     return countries, indheaders, indicatorsetsindicators, indicatorsetsdates, datafiles
 
 

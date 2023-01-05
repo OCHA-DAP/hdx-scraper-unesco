@@ -104,7 +104,6 @@ if __name__ == "__main__":
             base_url = "https://apimgmtstzgjpfeq2u763lag.blob.core.windows.net/content/MediaLibrary/bdds/Edu-september-2022/"
     facade(
         main,
-        hdx_site="stage",
         user_agent_config_yaml=join(expanduser("~"), ".useragents.yml"),
         user_agent_lookup=lookup,
         project_config_yaml=join("config", "project_configuration.yml"),

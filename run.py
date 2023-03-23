@@ -101,7 +101,7 @@ if __name__ == "__main__":
     if base_url is None:
         base_url = getenv("BASE_URL")
         if base_url is None:
-            base_url = "https://apimgmtstzgjpfeq2u763lag.blob.core.windows.net/content/MediaLibrary/bdds/Edu-september-2022/"
+            base_url = "https://apimgmtstzgjpfeq2u763lag.blob.core.windows.net/content/MediaLibrary/bdds/"
     facade(
         main,
         user_agent_config_yaml=join(expanduser("~"), ".useragents.yml"),

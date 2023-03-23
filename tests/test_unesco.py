@@ -37,17 +37,20 @@ class TestUNESCO:
         Vocabulary._tags_dict = {
             "sustainable development goals": {
                 "Action to Take": "merge",
-                "New Tag(s)": "sustainable development goals - sdg",
+                "New Tag(s)": "sustainable development goals-sdg",
             }
         }
+        tags = (
+            "sustainable development",
+            "demographics",
+            "socioeconomics",
+            "education",
+            "indicators",
+            "sustainable development goals-sdg",
+            "hxl",
+        )
         Vocabulary._approved_vocabulary = {
-            "tags": [
-                {"name": "hxl"},
-                {"name": "indicators"},
-                {"name": "health"},
-                {"name": "demographics"},
-                {"name": "sustainable development goals - sdg"},
-            ],
+            "tags": [{"name": tag} for tag in tags],
             "id": "4e61d464-4943-4e97-973a-84673c1aaa87",
             "name": "approved",
         }
@@ -184,11 +187,27 @@ class TestUNESCO:
                     "groups": [{"name": "afg"}],
                     "tags": [
                         {
+                            "name": "sustainable development",
+                            "vocabulary_id": "4e61d464-4943-4e97-973a-84673c1aaa87",
+                        },
+                        {
                             "name": "demographics",
                             "vocabulary_id": "4e61d464-4943-4e97-973a-84673c1aaa87",
                         },
                         {
+                            "name": "socioeconomics",
+                            "vocabulary_id": "4e61d464-4943-4e97-973a-84673c1aaa87",
+                        },
+                        {
+                            "name": "education",
+                            "vocabulary_id": "4e61d464-4943-4e97-973a-84673c1aaa87",
+                        },
+                        {
                             "name": "indicators",
+                            "vocabulary_id": "4e61d464-4943-4e97-973a-84673c1aaa87",
+                        },
+                        {
+                            "name": "sustainable development goals-sdg",
                             "vocabulary_id": "4e61d464-4943-4e97-973a-84673c1aaa87",
                         },
                         {
@@ -240,11 +259,27 @@ class TestUNESCO:
                     "image_url": "https://uis.unesco.org/sites/default/files/logo-website_1.png",
                     "tags": [
                         {
+                            "name": "sustainable development",
+                            "vocabulary_id": "4e61d464-4943-4e97-973a-84673c1aaa87",
+                        },
+                        {
                             "name": "demographics",
                             "vocabulary_id": "4e61d464-4943-4e97-973a-84673c1aaa87",
                         },
                         {
+                            "name": "socioeconomics",
+                            "vocabulary_id": "4e61d464-4943-4e97-973a-84673c1aaa87",
+                        },
+                        {
+                            "name": "education",
+                            "vocabulary_id": "4e61d464-4943-4e97-973a-84673c1aaa87",
+                        },
+                        {
                             "name": "indicators",
+                            "vocabulary_id": "4e61d464-4943-4e97-973a-84673c1aaa87",
+                        },
+                        {
+                            "name": "sustainable development goals-sdg",
                             "vocabulary_id": "4e61d464-4943-4e97-973a-84673c1aaa87",
                         },
                         {

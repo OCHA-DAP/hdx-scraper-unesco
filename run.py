@@ -101,12 +101,12 @@ if __name__ == "__main__":
     if base_url is None:
         base_url = getenv("BASE_URL")
         if base_url is None:
-            base_url = "https://apimgmtstzgjpfeq2u763lag.blob.core.windows.net/content/MediaLibrary/bdds/"
+            base_url = "https://uis.unesco.org/sites/default/files/documents/bdds/022024/"
     facade(
         main,
-        user_agent_config_yaml=join(expanduser("~"), ".useragents.yml"),
+        user_agent_config_yaml=join(expanduser("~"), ".useragents.yaml"),
         user_agent_lookup=lookup,
-        project_config_yaml=join("config", "project_configuration.yml"),
+        project_config_yaml=join("config", "project_configuration.yaml"),
         base_url=base_url,
         test=args.test,
     )

@@ -255,8 +255,8 @@ class TestUNESCO:
                     "name": "unesco-data-for-afghanistan-showcase",
                     "title": "Afghanistan - Education Indicators",
                     "notes": "Education indicators for Afghanistan",
-                    "url": "http://uis.unesco.org/en/country/AF",
-                    "image_url": "https://uis.unesco.org/sites/default/files/logo-website_1.png",
+                    "url": "https://uis.unesco.org/en/country/AF",
+                    "image_url": "https://tcg.uis.unesco.org/wp-content/uploads/sites/4/2021/09/combined_uis_colors_eng-002-300x240.png",
                     "tags": [
                         {
                             "name": "sustainable development",

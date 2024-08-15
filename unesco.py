@@ -257,7 +257,7 @@ def generate_dataset_and_showcase(
             "description": f"{indicatorsetname} indicator list with HXL tags",
         }
         indicators = indicatorsetindicators["rows"]
-        success, _ = dataset.generate_resource_from_iterator(
+        success, _ = dataset.generate_resource_from_iterable(
             indheaders, indicators, hxltags, outputfolder, filename, resourcedata
         )
         if success is False:
@@ -301,8 +301,8 @@ def generate_dataset_and_showcase(
             "name": f"{slugified_name}-showcase",
             "title": title,
             "notes": f"Education indicators for {countryname}",
-            "url": f"http://uis.unesco.org/en/country/{country['iso2']}",
-            "image_url": "https://uis.unesco.org/sites/default/files/logo-website_1.png",
+            "url": f"https://uis.unesco.org/en/country/{country['iso2']}",
+            "image_url": "https://tcg.uis.unesco.org/wp-content/uploads/sites/4/2021/09/combined_uis_colors_eng-002-300x240.png",
         }
     )
     showcase.add_tags(tags)

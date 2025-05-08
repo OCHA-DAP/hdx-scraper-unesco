@@ -6,6 +6,7 @@ UNESCO:
 Reads UNESCO bulk files and creates datasets.
 
 """
+
 import logging
 import re
 from os import remove, rename
@@ -14,13 +15,14 @@ from shutil import copyfileobj
 from urllib.request import urlretrieve
 from zipfile import ZipFile
 
+from slugify import slugify
+
 from hdx.data.dataset import Dataset
 from hdx.data.hdxobject import HDXError
 from hdx.data.showcase import Showcase
 from hdx.location.country import Country
-from hdx.utilities.dateparse import parse_date_range
+from hdx.utilities.dateparse import default_date, default_enddate, parse_date_range
 from hdx.utilities.dictandlist import dict_of_lists_add, dict_of_sets_add
-from slugify import slugify
 
 logger = logging.getLogger(__name__)
 
@@ -180,7 +182,7 @@ def generate_dataset_and_showcase(
 
     dataset.set_maintainer("a5c5296a-3206-4e51-b2de-bfe34857185f")
     dataset.set_organization("18f2d467-dcf8-4b7e-bffa-b3c338ba3a7c")
-    dataset.set_expected_update_frequency("Every three months")
+    dataset.set_expected_update_frequency("Never")
     dataset.set_subnational(False)
     try:
         dataset.add_country_location(countryiso)
@@ -198,7 +200,27 @@ def generate_dataset_and_showcase(
     ]
     dataset.add_tags(tags)
 
+    earliest_start_date = default_enddate
+    latest_end_date = default_date
+
     def process_row(headers, row):
+        nonlocal earliest_start_date, latest_end_date
+        if row["country_id"] != countryiso:
+            return None
+        year = row["year"]
+        if year:
+            startdate, enddate = parse_date_range(
+                year,
+                zero_time=True,
+                max_endtime=True,
+            )
+            if startdate < earliest_start_date:
+                earliest_start_date = startdate
+            if enddate > latest_end_date:
+                latest_end_date = enddate
+        return row
+
+    def process_metadata_row(headers, row):
         if row["country_id"] == countryiso:
             return row
         else:
@@ -241,7 +263,6 @@ def generate_dataset_and_showcase(
             filename,
             resourcedata,
             row_function=process_row,
-            yearcol="year",
             quickcharts=quickcharts,
         )
         if success is False:
@@ -280,7 +301,7 @@ def generate_dataset_and_showcase(
                 outputfolder,
                 filename,
                 resourcedata,
-                row_function=process_row,
+                row_function=process_metadata_row,
             )
             if success is False:
                 logger.warning(f"{resourcename} for {countryname} has no data!")
@@ -288,6 +309,7 @@ def generate_dataset_and_showcase(
     if dataset.number_of_resources() == 0:
         logger.warning(f"{countryname} has no data!")
         return None, None, None, None
+    dataset.set_time_period(earliest_start_date, latest_end_date)
     dataset.quickcharts_resource_last()
     notes = [
         f"Education indicators for {countryname}.\n\n",

@@ -3,22 +3,24 @@
 Unit tests for UNESCO.
 
 """
+
 import os
 from os.path import join
 
 import pytest
+
 from hdx.api.configuration import Configuration
 from hdx.api.locations import Locations
 from hdx.data.vocabulary import Vocabulary
 from hdx.location.country import Country
-from hdx.utilities.compare import assert_files_same
-from hdx.utilities.downloader import Download
-from hdx.utilities.path import temp_dir
-from unesco import (
+from hdx.scraper.unesco.unesco import (
     download_indicatorsets,
     generate_dataset_and_showcase,
     get_countriesdata,
 )
+from hdx.utilities.compare import assert_files_same
+from hdx.utilities.downloader import Download
+from hdx.utilities.path import temp_dir
 
 
 class TestUNESCO:
@@ -182,7 +184,7 @@ class TestUNESCO:
                     "title": "Afghanistan - Education Indicators",
                     "maintainer": "a5c5296a-3206-4e51-b2de-bfe34857185f",
                     "owner_org": "18f2d467-dcf8-4b7e-bffa-b3c338ba3a7c",
-                    "data_update_frequency": "90",
+                    "data_update_frequency": "-1",
                     "subnational": "0",
                     "groups": [{"name": "afg"}],
                     "tags": [

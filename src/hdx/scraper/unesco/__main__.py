@@ -3,20 +3,28 @@
 Top level script. Calls other functions that generate datasets that this script then creates in HDX.
 
 """
+
 import argparse
 import logging
 import sys
 from os import getenv
 from os.path import expanduser, join
 
-from hdx.api.configuration import Configuration
-from hdx.facades.keyword_arguments import facade
-from hdx.utilities.downloader import Download
-from hdx.utilities.path import progress_storing_folder, wheretostart_tempdir_batch
 from unesco import (
     download_indicatorsets,
     generate_dataset_and_showcase,
     get_countriesdata,
+)
+
+from hdx.api.configuration import Configuration
+from hdx.data.user import User
+from hdx.facades.keyword_arguments import facade
+from hdx.scraper.unesco._version import __version__
+from hdx.utilities.downloader import Download
+from hdx.utilities.path import (
+    progress_storing_folder,
+    script_dir_plus_file,
+    wheretostart_tempdir_batch,
 )
 
 logger = logging.getLogger(__name__)
@@ -29,6 +37,11 @@ def main(base_url=None, test=False, **ignore):
 
     if base_url is None:
         raise ValueError("Must supply base_url ")
+    logger.info(f"##### {lookup} version {__version__} ####")
+    if not User.check_current_user_organization_access(
+        "18f2d467-dcf8-4b7e-bffa-b3c338ba3a7c", "create_dataset"
+    ):
+        raise PermissionError("API Token does not give access to UNESCO organisation!")
     with Download() as downloader:
         with wheretostart_tempdir_batch(lookup) as info:
             folder = info["folder"]
@@ -72,7 +85,11 @@ def main(base_url=None, test=False, **ignore):
                     info["folder"],
                 )
                 if dataset:
-                    dataset.update_from_yaml()
+                    dataset.update_from_yaml(
+                        script_dir_plus_file(
+                            join("config", "hdx_dataset_static.yaml"), main
+                        )
+                    )
                     dataset.generate_quickcharts(
                         -1, bites_disabled=bites_disabled, indicators=qc_indicators
                     )
@@ -101,12 +118,16 @@ if __name__ == "__main__":
     if base_url is None:
         base_url = getenv("BASE_URL")
         if base_url is None:
-            base_url = "https://uis.unesco.org/sites/default/files/documents/bdds/022024/"
+            base_url = (
+                "https://uis.unesco.org/sites/default/files/documents/bdds/022025/"
+            )
     facade(
         main,
         user_agent_config_yaml=join(expanduser("~"), ".useragents.yaml"),
         user_agent_lookup=lookup,
-        project_config_yaml=join("config", "project_configuration.yaml"),
+        project_config_yaml=script_dir_plus_file(
+            join("config", "project_configuration.yaml"), main
+        ),
         base_url=base_url,
         test=args.test,
     )

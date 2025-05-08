@@ -35,13 +35,14 @@ lookup = "hdx-scraper-unesco"
 def main(base_url=None, test=False, **ignore):
     """Generate dataset and create it in HDX"""
 
+    logger.info(f"##### {lookup} version {__version__} ####")
     if base_url is None:
         raise ValueError("Must supply base_url ")
-    logger.info(f"##### {lookup} version {__version__} ####")
     if not User.check_current_user_organization_access(
         "18f2d467-dcf8-4b7e-bffa-b3c338ba3a7c", "create_dataset"
     ):
         raise PermissionError("API Token does not give access to UNESCO organisation!")
+    logger.info(f"Using UNESCO url {base_url}")
     with Download() as downloader:
         with wheretostart_tempdir_batch(lookup) as info:
             folder = info["folder"]

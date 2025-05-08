@@ -13,7 +13,7 @@ from hdx.api.configuration import Configuration
 from hdx.api.locations import Locations
 from hdx.data.vocabulary import Vocabulary
 from hdx.location.country import Country
-from hdx.scraper.unesco.unesco import (
+from hdx.scraper.unesco.pipeline import (
     download_indicatorsets,
     generate_dataset_and_showcase,
     get_countriesdata,

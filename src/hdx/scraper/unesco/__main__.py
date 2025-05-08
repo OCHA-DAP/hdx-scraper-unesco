@@ -10,16 +10,15 @@ import sys
 from os import getenv
 from os.path import expanduser, join
 
-from unesco import (
-    download_indicatorsets,
-    generate_dataset_and_showcase,
-    get_countriesdata,
-)
-
 from hdx.api.configuration import Configuration
 from hdx.data.user import User
 from hdx.facades.keyword_arguments import facade
 from hdx.scraper.unesco._version import __version__
+from hdx.scraper.unesco.pipeline import (
+    download_indicatorsets,
+    generate_dataset_and_showcase,
+    get_countriesdata,
+)
 from hdx.utilities.downloader import Download
 from hdx.utilities.path import (
     progress_storing_folder,

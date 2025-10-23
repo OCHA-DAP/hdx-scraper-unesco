@@ -227,29 +227,21 @@ class TestUNESCO:
                         "name": "National Monitoring data",
                         "description": "National Monitoring data with HXL tags.\n\nIndicators: Government expenditure on lower secondary education, Government expenditure on primary education, Gross enrolment ratio, primary and secondary",
                         "format": "csv",
-                        "resource_type": "file.upload",
-                        "url_type": "upload",
                     },
                     {
                         "name": "National Monitoring indicator list",
                         "description": "National Monitoring indicator list with HXL tags",
                         "format": "csv",
-                        "resource_type": "file.upload",
-                        "url_type": "upload",
                     },
                     {
                         "name": "National Monitoring metadata",
                         "description": "National Monitoring metadata with HXL tags",
                         "format": "csv",
-                        "resource_type": "file.upload",
-                        "url_type": "upload",
                     },
                     {
                         "name": "QuickCharts-National Monitoring data",
                         "description": "Cut down data for QuickCharts",
                         "format": "csv",
-                        "resource_type": "file.upload",
-                        "url_type": "upload",
                     },
                 ]
 

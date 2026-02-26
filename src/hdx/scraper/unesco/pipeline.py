@@ -26,16 +26,6 @@ from hdx.utilities.dictandlist import dict_of_lists_add, dict_of_sets_add
 
 logger = logging.getLogger(__name__)
 
-hxltags = {
-    "indicator_id": "#indicator+code",
-    "indicator_label_en": "#indicator+name",
-    "country_id": "#country+code",
-    "year": "#date+year",
-    "value": "#indicator+value+num",
-    "type": "#description+type",
-    "metadata": "#description",
-}
-
 
 def download_indicatorsets(
     base_url, folder, indicatorsetcodes, urlretrieve=urlretrieve
@@ -196,7 +186,6 @@ def generate_dataset_and_showcase(
         "education",
         "indicators",
         "sustainable development goals-sdg",
-        "hxl",
     ]
     dataset.add_tags(tags)
 
@@ -227,8 +216,6 @@ def generate_dataset_and_showcase(
             return None
 
     categories = list()
-    bites_disabled = None
-    qc_indicators = None
 
     for indicatorsetcode in indicatorsetcodes:
         indicatorsetname = indicatorsetcodes[indicatorsetcode]["title"]
@@ -239,47 +226,33 @@ def generate_dataset_and_showcase(
         resourcename = f"{indicatorsetname} data"
         resourcedata = {
             "name": resourcename,
-            "description": f"{indicatorsetname} data with HXL tags.\n\nIndicators: {', '.join(sorted(indicator_names))}",
+            "description": f"{indicatorsetname} data.\n\nIndicators: {', '.join(sorted(indicator_names))}",
         }
-        indicators_for_qc = indicatorsetcodes[indicatorsetcode].get("quickcharts")
-        if indicators_for_qc:
-            values = [x["code"] for x in indicators_for_qc]
-            quickcharts = {
-                "hashtag": "#indicator+code",
-                "values": values,
-                "numeric_hashtag": "#indicator+value+num",
-                "cutdown": 2,
-                "cutdownhashtags": ["#indicator+code", "#country+code", "#date+year"],
-            }
-            qc_indicators = indicators_for_qc
-        else:
-            quickcharts = None
         outputfolder = join(folder, indicatorsetcode)
-        success, results = dataset.download_and_generate_resource(
+        success, results = dataset.download_generate_resource(
             downloader,
             datafile,
-            hxltags,
             outputfolder,
             filename,
             resourcedata,
             row_function=process_row,
-            quickcharts=quickcharts,
         )
         if success is False:
             logger.warning(f"{resourcename} for {countryname} has no data!")
             continue
-        disabled_bites = results.get("bites_disabled")
-        if disabled_bites:
-            bites_disabled = disabled_bites
         filename = f"{indicatorsetcode}_indicatorlist_{countryiso}.csv"
         resourcename = f"{indicatorsetname} indicator list"
         resourcedata = {
             "name": resourcename,
-            "description": f"{indicatorsetname} indicator list with HXL tags",
+            "description": f"{indicatorsetname} indicator list",
         }
         indicators = indicatorsetindicators["rows"]
-        success, _ = dataset.generate_resource_from_iterable(
-            indheaders, indicators, hxltags, outputfolder, filename, resourcedata
+        success, _ = dataset.generate_resource(
+            outputfolder,
+            filename,
+            indicators,
+            resourcedata,
+            indheaders,
         )
         if success is False:
             logger.warning(f"{resourcename} for {countryname} has no data!")
@@ -292,12 +265,11 @@ def generate_dataset_and_showcase(
             resourcename = f"{indicatorsetname} metadata"
             resourcedata = {
                 "name": resourcename,
-                "description": f"{indicatorsetname} metadata with HXL tags",
+                "description": f"{indicatorsetname} metadata",
             }
-            success, results = dataset.download_and_generate_resource(
+            success, results = dataset.download_generate_resource(
                 downloader,
                 metadatafile,
-                hxltags,
                 outputfolder,
                 filename,
                 resourcedata,
@@ -310,7 +282,6 @@ def generate_dataset_and_showcase(
         logger.warning(f"{countryname} has no data!")
         return None, None, None, None
     dataset.set_time_period(earliest_start_date, latest_end_date)
-    dataset.quickcharts_resource_last()
     notes = [
         f"Education indicators for {countryname}.\n\n",
         "Contains data from the UNESCO Institute for Statistics [bulk data service](http://data.uis.unesco.org) ",
@@ -329,4 +300,4 @@ def generate_dataset_and_showcase(
     )
     showcase.add_tags(tags)
 
-    return dataset, showcase, bites_disabled, qc_indicators
+    return dataset, showcase

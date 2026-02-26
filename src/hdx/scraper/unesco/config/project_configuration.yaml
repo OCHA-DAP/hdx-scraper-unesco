@@ -3,16 +3,6 @@ indicatorsetcodes:
   SDG:
     title: "SDG 4 Global and Thematic"
     showcase: "https://uis.unesco.org/en/topic/sustainable-development-goal-4"
-    quickcharts:
-      - code: "XGDP.FSGOV"
-        title: "Government expenditure on education as a percentage of GDP (%)"
-        unit: "Percentage (%)"
-      - code: "CR.2"
-        title: "Completion rate, lower secondary education, both sexes (%)"
-        unit: "Percentage (%)"
-      - code: "ROFST.3.CP"
-        title: "Out-of-school rate for youth of upper secondary school age, both sexes (%)"
-        unit: "Percentage (%)"
   OPRI:
     title: "Other Policy Relevant Indicators"
     showcase: "https://uis.unesco.org/#tabs-themes_tab-center-1"

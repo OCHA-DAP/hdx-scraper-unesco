@@ -72,8 +72,6 @@ def main(base_url=None, test=False, **ignore):
                 (
                     dataset,
                     showcase,
-                    bites_disabled,
-                    qc_indicators,
                 ) = generate_dataset_and_showcase(
                     indicatorsetcodes,
                     indheaders,
@@ -90,14 +88,10 @@ def main(base_url=None, test=False, **ignore):
                             join("config", "hdx_dataset_static.yaml"), main
                         )
                     )
-                    dataset.generate_quickcharts(
-                        -1, bites_disabled=bites_disabled, indicators=qc_indicators
-                    )
                     dataset.create_in_hdx(
                         match_resources_by_metadata=False,
                         remove_additional_resources=True,
                         match_resource_order=True,
-                        hxl_update=False,
                         updated_by_script="HDX Scraper: UNESCO",
                         batch=batch,
                     )

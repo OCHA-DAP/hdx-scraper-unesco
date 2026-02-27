@@ -221,12 +221,11 @@ def generate_dataset_and_showcase(
         indicatorsetname = indicatorsetcodes[indicatorsetcode]["title"]
         metadatafile, datafile = datafiles[indicatorsetcode]
         indicatorsetindicators = indicatorsetsindicators[indicatorsetcode]
-        indicator_names = indicatorsetindicators["shortnames"]
         filename = f"{indicatorsetcode}_data_{countryiso}.csv"
         resourcename = f"{indicatorsetname} data"
         resourcedata = {
             "name": resourcename,
-            "description": f"{indicatorsetname} data.\n\nIndicators: {', '.join(sorted(indicator_names))}",
+            "description": f"{indicatorsetname} data. See indicator list below for list of indicators in this resource.",
         }
         outputfolder = join(folder, indicatorsetcode)
         success, results = dataset.download_generate_resource(

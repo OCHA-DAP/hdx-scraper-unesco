@@ -113,7 +113,7 @@ if __name__ == "__main__":
         base_url = getenv("BASE_URL")
         if base_url is None:
             base_url = (
-                "https://uis.unesco.org/sites/default/files/documents/bdds/022025/"
+                "https://download.uis.unesco.org/bdds/202602/"
             )
     facade(
         main,

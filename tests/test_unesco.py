@@ -218,7 +218,7 @@ class TestUNESCO:
                 assert resources == [
                     {
                         "name": "National Monitoring data",
-                        "description": "National Monitoring data.\n\nIndicators: Government expenditure on lower secondary education, Government expenditure on primary education, Gross enrolment ratio, primary and secondary",
+                        "description": "National Monitoring data. See indicator list below for list of indicators in this resource.",
                         "format": "csv",
                     },
                     {

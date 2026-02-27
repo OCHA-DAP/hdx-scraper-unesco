@@ -112,9 +112,7 @@ if __name__ == "__main__":
     if base_url is None:
         base_url = getenv("BASE_URL")
         if base_url is None:
-            base_url = (
-                "https://download.uis.unesco.org/bdds/202602/"
-            )
+            base_url = "https://download.uis.unesco.org/bdds/202602/"
     facade(
         main,
         user_agent_config_yaml=join(expanduser("~"), ".useragents.yaml"),

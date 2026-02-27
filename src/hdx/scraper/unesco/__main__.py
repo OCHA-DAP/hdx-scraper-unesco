@@ -72,8 +72,6 @@ def main(base_url=None, test=False, **ignore):
                 (
                     dataset,
                     showcase,
-                    bites_disabled,
-                    qc_indicators,
                 ) = generate_dataset_and_showcase(
                     indicatorsetcodes,
                     indheaders,
@@ -90,14 +88,10 @@ def main(base_url=None, test=False, **ignore):
                             join("config", "hdx_dataset_static.yaml"), main
                         )
                     )
-                    dataset.generate_quickcharts(
-                        -1, bites_disabled=bites_disabled, indicators=qc_indicators
-                    )
                     dataset.create_in_hdx(
                         match_resources_by_metadata=False,
                         remove_additional_resources=True,
                         match_resource_order=True,
-                        hxl_update=False,
                         updated_by_script="HDX Scraper: UNESCO",
                         batch=batch,
                     )
@@ -118,9 +112,7 @@ if __name__ == "__main__":
     if base_url is None:
         base_url = getenv("BASE_URL")
         if base_url is None:
-            base_url = (
-                "https://uis.unesco.org/sites/default/files/documents/bdds/022025/"
-            )
+            base_url = "https://download.uis.unesco.org/bdds/202602/"
     facade(
         main,
         user_agent_config_yaml=join(expanduser("~"), ".useragents.yaml"),

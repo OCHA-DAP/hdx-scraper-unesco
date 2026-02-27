@@ -49,7 +49,6 @@ class TestUNESCO:
             "education",
             "indicators",
             "sustainable development goals-sdg",
-            "hxl",
         )
         Vocabulary._approved_vocabulary = {
             "tags": [{"name": tag} for tag in tags],
@@ -73,7 +72,7 @@ class TestUNESCO:
         with temp_dir("TestUNESCO") as folder:
             configuration = Configuration.read()
             result = download_indicatorsets(
-                configuration["base_url"],
+                "http://xxx/",
                 folder,
                 configuration["indicatorsetcodes"],
                 urlretrieve=mock_urlretrieve,
@@ -167,8 +166,6 @@ class TestUNESCO:
                 (
                     dataset,
                     showcase,
-                    bites_disabled,
-                    qc_indicators,
                 ) = generate_dataset_and_showcase(
                     indicatorsetcodes,
                     TestUNESCO.indheaders,
@@ -212,10 +209,6 @@ class TestUNESCO:
                             "name": "sustainable development goals-sdg",
                             "vocabulary_id": "4e61d464-4943-4e97-973a-84673c1aaa87",
                         },
-                        {
-                            "name": "hxl",
-                            "vocabulary_id": "4e61d464-4943-4e97-973a-84673c1aaa87",
-                        },
                     ],
                     "dataset_date": "[1970-01-01T00:00:00 TO 2020-12-31T23:59:59]",
                     "notes": "Education indicators for Afghanistan.\n\nContains data from the UNESCO Institute for Statistics [bulk data service](http://data.uis.unesco.org) covering the following categories: National Monitoring (made 2020 September)",
@@ -225,22 +218,17 @@ class TestUNESCO:
                 assert resources == [
                     {
                         "name": "National Monitoring data",
-                        "description": "National Monitoring data with HXL tags.\n\nIndicators: Government expenditure on lower secondary education, Government expenditure on primary education, Gross enrolment ratio, primary and secondary",
+                        "description": "National Monitoring data. See indicator list below for list of indicators in this resource.",
                         "format": "csv",
                     },
                     {
                         "name": "National Monitoring indicator list",
-                        "description": "National Monitoring indicator list with HXL tags",
+                        "description": "National Monitoring indicator list",
                         "format": "csv",
                     },
                     {
                         "name": "National Monitoring metadata",
-                        "description": "National Monitoring metadata with HXL tags",
-                        "format": "csv",
-                    },
-                    {
-                        "name": "QuickCharts-National Monitoring data",
-                        "description": "Cut down data for QuickCharts",
+                        "description": "National Monitoring metadata",
                         "format": "csv",
                     },
                 ]
@@ -276,36 +264,10 @@ class TestUNESCO:
                             "name": "sustainable development goals-sdg",
                             "vocabulary_id": "4e61d464-4943-4e97-973a-84673c1aaa87",
                         },
-                        {
-                            "name": "hxl",
-                            "vocabulary_id": "4e61d464-4943-4e97-973a-84673c1aaa87",
-                        },
                     ],
                 }
 
-                assert bites_disabled == [False, False, False]
-                assert qc_indicators == [
-                    {
-                        "code": "GER.1t3",
-                        "title": "Gross enrolment ratio, primary and secondary",
-                        "unit": "Percentage (%)",
-                    },
-                    {
-                        "code": "XGDP.1.FSgov",
-                        "title": "Government expenditure on primary education",
-                        "unit": "Percentage of GDP (%)",
-                    },
-                    {
-                        "code": "XGDP.2.FSgov",
-                        "title": "Government expenditure on lower secondary education",
-                        "unit": "Percentage of GDP (%)",
-                    },
-                ]
                 file = "NATMON_data_AFG.csv"
-                assert_files_same(
-                    join("tests", "fixtures", file), join(folder, "NATMON", file)
-                )
-                file = "qc_NATMON_data_AFG.csv"
                 assert_files_same(
                     join("tests", "fixtures", file), join(folder, "NATMON", file)
                 )

@@ -180,7 +180,7 @@ pytest==9.0.2
     #   hdx-scraper-unesco (pyproject.toml)
     #   pytest-check
     #   pytest-cov
-pytest-check==2.7.0
+pytest-check==2.7.2
     # via hdx-scraper-unesco (pyproject.toml)
 pytest-cov==7.0.0
     # via hdx-scraper-unesco (pyproject.toml)

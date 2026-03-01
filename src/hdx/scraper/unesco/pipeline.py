@@ -178,7 +178,7 @@ def generate_dataset_and_showcase(
         dataset.add_country_location(countryiso)
     except HDXError as e:
         logger.exception(f"{countryname} has a problem! {e}")
-        return None, None, None
+        return None, None
     tags = [
         "sustainable development",
         "demographics",
@@ -279,7 +279,7 @@ def generate_dataset_and_showcase(
                 continue
     if dataset.number_of_resources() == 0:
         logger.warning(f"{countryname} has no data!")
-        return None, None, None, None
+        return None, None
     dataset.set_time_period(earliest_start_date, latest_end_date)
     notes = [
         f"Education indicators for {countryname}.\n\n",
